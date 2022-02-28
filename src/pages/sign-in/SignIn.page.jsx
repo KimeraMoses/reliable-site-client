@@ -16,7 +16,7 @@ function SignIn() {
               style={{ maxWidth: '536px' }}
             >
               <div className="text-center">
-                <h2 className="text-md text-2xl text-white font-normal">
+                <h2 className="text-md text-2xl text-white font-normal mb-2">
                   {Data.pages.login.title}
                 </h2>
                 <p className="custom-text-light">
@@ -30,24 +30,17 @@ function SignIn() {
               <form>
                 <div className="mt-4 mb-3">
                   <label
-                    htmlFor="userName"
+                    htmlFor="emailAddress"
                     className="form-label text-white font-light text-sm"
                   >
                     {Data.pages.login.username}
                   </label>
                   <input
-                    type="text"
+                    type="email"
                     className="w-full h-12 bg-custom-main rounded-md text-gray-300 placeholder:text-gray-400 placeholder:text-sm px-3  placeholder:font-light focus:outline-none"
-                    id="userName"
+                    id="emailAddress"
                     placeholder={Data.pages.login.placeholder}
-                    // value={email}
-                    // onChange={(e) => setEmail(e.target.value)}
                   />
-                  {/* {errors.email && (
-                    <span className="text-red-600 mt-2 flex">
-                      {errors.email}
-                    </span>
-                  )} */}
                 </div>
                 <div className="md:mb-8">
                   <div className="flex justify-between">

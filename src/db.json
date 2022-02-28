@@ -1,13 +1,13 @@
 {
   "pages": {
     "login": {
-      "title": "Sign In To Your Admin Account",
+      "title": "Sign In Your Account",
       "subTitle": "Enter Your Username And Password To Continue",
-      "username": "User Name",
+      "username": "Email Address",
       "password": "Password",
-      "placeholder": "Paul.Elliot",
+      "placeholder": "Paul.Elliot@fakemail.com",
       "ForgotPassword": "Forgot Password?",
-      "loginButton": "Sign In To Your Admin Account"
+      "loginButton": "Sign In To Your Account"
     },
     "emailVerification": {
       "title": "Email Verification",
