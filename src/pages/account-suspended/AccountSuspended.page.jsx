@@ -19,7 +19,7 @@ function AccountSuspended() {
           </p>
         </div>
         <div>
-          <h3 className="text-sm text-white text-base">
+          <h3 className="text-sm text-white">
             {Data.pages.accountSuspended.subTitle}
           </h3>
           <p className="mb-5 text-base custom-text-light">
@@ -27,7 +27,7 @@ function AccountSuspended() {
           </p>
           <button
             type="button"
-            className="custom-blue-bg py-3 px-20 rounded-lg text-white"
+            className="bg-blue-500 hover:bg-blue-700 ease-in duration-200 py-3 px-20 rounded-lg text-white"
           >
             {Data.pages.accountSuspended.btnSupport}
           </button>

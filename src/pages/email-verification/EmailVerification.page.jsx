@@ -19,7 +19,7 @@ function EmailVerification() {
             </p>
             <button
               type="submit"
-              className="mt-4 custom-blue-bg w-full h-12 rounded-md h-14 text-white font-light"
+              className="bg-blue-500 hover:bg-blue-700 ease-in duration-200 mt-4 w-full h-12 rounded-md text-white font-light"
             >
               {Data.pages.emailVerification.verifyBtn}
             </button>

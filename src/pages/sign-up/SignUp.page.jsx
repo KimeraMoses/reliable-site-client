@@ -132,7 +132,7 @@ function SignUp() {
             </label>
             <input
               type="text"
-              className="w-full h-12 bg-custom-main rounded-md h-14 placeholder:text-gray-400 text-gray-400   placeholder:text-sm px-3  placeholder:font-light focus:outline-none"
+              className="w-full h-12 bg-custom-main rounded-md placeholder:text-gray-400 text-gray-400   placeholder:text-sm px-3  placeholder:font-light focus:outline-none"
               id="exampleInputEmail1"
               placeholder="Paul Elliott"
               value={username}
@@ -151,7 +151,7 @@ function SignUp() {
             </label>
             <input
               type="text"
-              className="w-full h-12 bg-custom-main rounded-md h-14 placeholder:text-gray-400 text-gray-400  placeholder:text-sm px-3  placeholder:font-light focus:outline-none"
+              className="w-full h-12 bg-custom-main rounded-md placeholder:text-gray-400 text-gray-400  placeholder:text-sm px-3  placeholder:font-light focus:outline-none"
               id="fullName"
               placeholder="Paul Elliott"
               value={fullName}
@@ -170,7 +170,7 @@ function SignUp() {
             </label>
             <input
               type="email"
-              className="w-full h-12 bg-custom-main rounded-md h-14 placeholder:text-gray-400 text-gray-400  placeholder:text-sm px-3  placeholder:font-light focus:outline-none"
+              className="w-full h-12 bg-custom-main rounded-md placeholder:text-gray-400 text-gray-400  placeholder:text-sm px-3  placeholder:font-light focus:outline-none"
               id="fullName"
               placeholder="Paul.Elliott@fakemail.com"
               value={emailAddress}
@@ -423,7 +423,7 @@ function SignUp() {
           </div>
           <button
             type="submit"
-            className="custom-blue-bg text-white w-full mb-2 rounded-md h-14 hover:bg-sky-600/[.8] ease-in duration-200"
+            className="bg-blue-500 hover:bg-blue-700 text-white w-full mb-2 rounded-md h-14 hover:bg-sky-600/[.8] ease-in duration-200"
           >
             {Data.pages.register.createAccountBtn}
           </button>

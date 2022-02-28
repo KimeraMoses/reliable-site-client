@@ -1,49 +1,8 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React from 'react';
 import Data from '../../db.json';
-// import { login, logout, selectLoggedUser } from '../redux/User/UserSlice';
 
 function SignIn() {
-  // const user = useSelector();
-
-  // const [email, setEmail] = useState('');
-  // const [password, setPassword] = useState('');
-  // const errorsObj = { email: '', password: '' };
-
-  // const [errors, setErrors] = useState(errorsObj);
-
-  // const dispatch = useDispatch();
-
-  // const loginHandler = (e) => {
-  //   e.preventDefault();
-  //   dispatch(
-  //     login({
-  //       email,
-  //       password,
-  //       loggedIn: true,
-  //     }),
-  //     logout()
-  //   );
-
-  //   let error = false;
-  //   const errObj = { ...errorsObj };
-
-  //   if (email === '') {
-  //     errObj.email = 'Email is required';
-  //     error = true;
-  //   }
-
-  //   if (password === '') {
-  //     errObj.password = 'Password is required';
-  //     error = true;
-  //   }
-  //   setErrors(errObj);
-  //   if (!error) {
-  //     console.log('form submitted');
-  //   }
-  // };
-
   return (
     <div>
       <div className="h-screen flex items-center ">
@@ -63,7 +22,7 @@ function SignIn() {
                 <p className="custom-text-light">
                   New here?
                   <span className="text-blue-400 cursor-pointer">
-                    Click Here
+                    &nbsp;Click Here&nbsp;
                   </span>
                   to create an account.
                 </p>
@@ -78,7 +37,7 @@ function SignIn() {
                   </label>
                   <input
                     type="text"
-                    className="w-full h-12 bg-custom-main rounded-md h-14 text-gray-300 placeholder:text-gray-400 placeholder:text-sm px-3  placeholder:font-light focus:outline-none"
+                    className="w-full h-12 bg-custom-main rounded-md text-gray-300 placeholder:text-gray-400 placeholder:text-sm px-3  placeholder:font-light focus:outline-none"
                     id="userName"
                     placeholder={Data.pages.login.placeholder}
                     // value={email}
@@ -107,19 +66,12 @@ function SignIn() {
                     className="w-full h-14 bg-custom-main rounded-md text-gray-300 placeholder:text-gray-300 px-3 placeholder:text-sm placeholder:font-light focus:outline-none"
                     id="exampleInputPassword1"
                     placeholder="**********"
-                    // value={password}
-                    // onChange={(e) => setPassword(e.target.value)}
                   />
-                  {/* {errors.password && (
-                    <span className="text-red-600 mt-2 flex">
-                      {errors.email}
-                    </span>
-                  )} */}
                 </div>
                 <div className="mt-4 md:mt-5 ">
                   <button
                     type="submit"
-                    className="custom-blue-bg hover:bg-sky-600/[.8]  ease-in duration-200 text-white w-full mb-2 rounded-md h-14"
+                    className="bg-blue-500 hover:bg-blue-700 ease-in duration-200 text-white w-full mb-2 rounded-md h-14"
                   >
                     {Data.pages.login.loginButton}
                   </button>

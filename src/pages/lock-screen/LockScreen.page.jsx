@@ -6,7 +6,7 @@ function LockScreen() {
       <div className="col-md-6 my-auto px-5  md:p-20">
         <div style={{ maxWidth: '668px' }} className="mx-auto">
           <div className="">
-            <img src="icon/user.svg" alt="" className="w-20 h-20" />
+            <img src="icon/logo.svg" alt="" className="w-20 h-20" />
             <h3 className="text-4xl text-white font-normal mt-5">
               Lock Screen
             </h3>
@@ -25,9 +25,7 @@ function LockScreen() {
               />{' '}
             </div>
             <div>
-              <h3 className="text-sm text-white text-base">
-                Welcome back, Paul
-              </h3>
+              <h3 className="text-sm text-white">Welcome back, Paul</h3>
               <p className=" text-base custom-text-light">
                 Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed
                 diam nonumy eirmod tempor invidunt.
@@ -37,13 +35,13 @@ function LockScreen() {
           <div className="col-md-8">
             <input
               type="email"
-              className="w-full h-12 mb-3  bg-custom-secondary rounded-md h-14 text-gray-300 placeholder:text-gray-400 placeholder:text-sm px-3  placeholder:font-light"
+              className="w-full h-12 mb-3  bg-custom-secondary rounded-md text-gray-300 placeholder:text-gray-400 placeholder:text-sm px-3  placeholder:font-light"
               id="enterPassword"
               placeholder="Enter Password"
             />
             <button
               type="button"
-              className="w-full custom-blue-bg py-3 px-5 rounded-lg text-white"
+              className="w-full h-12 custom-blue-bg ease-in duration-200 rounded-lg text-white bg-blue-500 hover:bg-blue-700"
             >
               Sign In
             </button>
