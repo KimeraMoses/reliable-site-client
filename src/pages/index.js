@@ -1,10 +1,8 @@
 import { lazy } from 'react';
 
 const pages = [
-  { path: '/', Component: lazy(() => import('./Home/Home.page')) },
-
   {
-    path: '/under-maintenance',
+    path: '/',
     Component: lazy(() => import('./under-maintenance/UnderMaintenance.page')),
   },
   {
@@ -18,21 +16,10 @@ const pages = [
     Component: lazy(() => import('./sign-up/SignUp.page')),
   },
   {
-    path: '/reset-password',
-    Component: lazy(() => import('./reset-password/ResetPassword.page')),
-  },
-  {
-    path: '/one-time-password',
-    Component: lazy(() => import('./one-time-password/OneTimePassword.page')),
-  },
-  {
     path: '/lock-screen',
     Component: lazy(() => import('./lock-screen/LockScreen.page')),
   },
-  {
-    path: '/forgot-password',
-    Component: lazy(() => import('./forgot-password/ForgotPassword.page')),
-  },
+
   {
     path: '/email-verification',
     Component: lazy(() =>
@@ -49,4 +36,20 @@ const pages = [
   },
 ];
 
+export const dashboardPages = [
+  {
+    path: '/dashboard',
+    Component: lazy(() => import('./Dashboard/Home/Home.page')),
+  },
+  {
+    path: '/dashboard/about',
+    Component: lazy(() => import('./Dashboard/About/About.page')),
+  },
+  {
+    path: '/dashboard/editor',
+    Component: lazy(() => import('./Dashboard/Editor/Editor.page')),
+  },
+];
+
 export default pages;
+export const Error404 = lazy(() => import('./error-404/Error404.page'));
