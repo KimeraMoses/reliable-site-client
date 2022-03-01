@@ -9,14 +9,12 @@ function SignUp() {
   const [emailAddress, setEmailaddress] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [brand, setBrand] = useState('');
   const [address1, setAddress1] = useState('');
   const [address2, setAddress2] = useState('');
   const [city, setCity] = useState('');
   const [stateProv, setStateProv] = useState('');
   const [country, setCountry] = useState('');
   const [zipCode, setZipCode] = useState('');
-  const [status, setStatus] = useState('');
   const [ipAddress, setIpAddress] = useState('');
 
   const registerErrorsOb = {
@@ -25,14 +23,12 @@ function SignUp() {
     emailAddress: '',
     password: '',
     confirmPassword: '',
-    brand: '',
     address1: '',
     address2: '',
     city: '',
     stateProv: '',
     country: '',
     zipCode: '',
-    status: '',
     ipAddress: '',
   };
   const [errors, setErrors] = useState(registerErrorsOb);
@@ -61,10 +57,6 @@ function SignUp() {
       registerErrorsObject.confirmPassword = 'Password Should Match';
       error = true;
     }
-    if (brand === '') {
-      registerErrorsObject.brand = 'Please nter Brand';
-      error = true;
-    }
     if (address1 === '') {
       registerErrorsObject.address1 = 'Please Enter Address 1 ';
       error = true;
@@ -91,10 +83,6 @@ function SignUp() {
     }
     if (zipCode === '') {
       registerErrorsObject.zipCode = 'Please Enter Zip Code ';
-      error = true;
-    }
-    if (status === '') {
-      registerErrorsObject.status = 'Please Enter Status ';
       error = true;
     }
     if (ipAddress === '') {
@@ -199,12 +187,6 @@ function SignUp() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            {/* <div className="flex">
-              <span className="w-1/4 bg-red"></span>
-              <span className="w-1/4 bg-red"></span>
-              <span className="w-1/4 bg-red"></span>
-              <span className="w-1/4 bg-red"></span>
-            </div> */}
             {errors.password && (
               <span className="text-red-600 mt-2 flex">{errors.password}</span>
             )}
@@ -231,28 +213,6 @@ function SignUp() {
               <span className="text-red-600 mt-2 flex">
                 {errors.confirmPassword}
               </span>
-            )}
-          </div>
-
-          <div className="mb-8">
-            <div className="flex justify-between">
-              <label
-                htmlFor="brand"
-                className="form-label text-white font-light text-sm"
-              >
-                Brand
-              </label>
-            </div>
-            <input
-              type="text"
-              className="w-full h-14 bg-custom-main rounded-md placeholder:text-gray-400 text-gray-400 px-3 placeholder:text-sm placeholder:font-light focus:outline-none"
-              id="brand"
-              placeholder="Mind 2 Matter"
-              value={brand}
-              onChange={(e) => setBrand(e.target.value)}
-            />
-            {errors.brand && (
-              <span className="text-red-600 mt-2 flex">{errors.brand}</span>
             )}
           </div>
           <div className="mb-8">
@@ -378,27 +338,6 @@ function SignUp() {
                 <span className="text-red-600 mt-2 flex">{errors.zipCode}</span>
               )}
             </div>
-          </div>
-          <div className="mb-8">
-            <div className="flex justify-between">
-              <label
-                htmlFor="zipCode"
-                className="form-label text-white font-light text-sm"
-              >
-                Status
-              </label>
-            </div>
-            <input
-              type="text"
-              className="w-full h-14 bg-custom-main rounded-md placeholder:text-gray-400 text-gray-400 px-3 placeholder:text-sm placeholder:font-light focus:outline-none"
-              id="status"
-              placeholder="Enabled"
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-            />
-            {errors.status && (
-              <span className="text-red-600 mt-2 flex">{errors.status}</span>
-            )}
           </div>
           <div className="mb-8">
             <div className="flex justify-between">
