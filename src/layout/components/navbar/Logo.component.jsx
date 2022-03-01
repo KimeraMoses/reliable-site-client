@@ -1,25 +1,35 @@
 import React from 'react';
 
-function Logo({ hide }) {
+function Logo({ hide, hideSide, toggleSide }) {
   return (
     <div
-      className="flex items-center justify-between  cursor-pointer bg-custom-main  h-24 pl-5"
-      style={
-        hide
-          ? { width: '300px', background: '#1e1e2d' }
-          : { width: '300px', background: '#151521' }
-      }
+      className={`flex items-center justify-between bg-custom-main h-24 pl-5 transition-all ${
+        hideSide ? 'w-[95px]' : 'w-[300px]'
+      } ${hide ? 'bg-[#1e1e2d]' : 'bg-[#1A1A27]'}`}
     >
       <div className="flex items-center ">
         <img src="/icon/logo.svg" alt="" className="w-12 height-12 mr-2" />
-        <div className="text-white">
-          <span className="text-yellow-500">reliable</span>site
-        </div>
+        {!hideSide && (
+          <div className="text-white">
+            <span className="text-yellow-500">reliable</span>site
+          </div>
+        )}
       </div>
 
       {!hide && (
-        <div className="hamburger mr-5">
-          <img src="/icon/dashboard-hamburger.svg" alt="" />
+        <div
+          className="hamburger pr-2 pl-2 flex items-center justify-center hover:bg-black/[.2] transition-all"
+          onClick={toggleSide}
+          onKeyPress={toggleSide}
+          role="button"
+          tabIndex={0}
+          style={{ height: '100%' }}
+        >
+          <img
+            src="/icon/dashboard-hamburger.svg"
+            style={hideSide ? { transform: 'scaleX(-1)' } : {}}
+            alt=""
+          />
         </div>
       )}
     </div>

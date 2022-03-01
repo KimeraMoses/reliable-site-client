@@ -74,12 +74,36 @@
     },
     "dashboard": {
       "sidebar": [
-        "Dashboard",
-        "Billing",
-        "Support",
-        "Knowledge Base",
-        "Reports",
-        "Settings"
+        {
+          "name": "Dashboard",
+          "path": "/dashboard",
+          "icon": "/icon/dashboard/menu/dashboard.svg"
+        },
+        {
+          "name": "Billing",
+          "path": "/dashboard/billing",
+          "icon": "/icon/dashboard/menu/billing.svg"
+        },
+        {
+          "name": "Support",
+          "path": "/dashboard/support",
+          "icon": "/icon/dashboard/menu/support.svg"
+        },
+        {
+          "name": "Knowledge Base",
+          "path": "/dashboard/knowledge-base",
+          "icon": "/icon/dashboard/menu/knowledge.svg"
+        },
+        {
+          "name": "Reports",
+          "path": "/dashboard/reports",
+          "icon": "/icon/dashboard/menu/reports.svg"
+        },
+        {
+          "name": "Settings",
+          "path": "/dashboard/settings",
+          "icon": "/icon/dashboard/menu/settings.svg"
+        }
       ],
 
       "topMenu": {}

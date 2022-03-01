@@ -3,12 +3,16 @@ import Data from '../../../db.json';
 import SideLinks from './SideLinks.component';
 import './SideBar.styles.scss';
 
-export function SideBar() {
+export function SideBar({ hideSide }) {
   return (
-    <div className="sidebar bg-custom-secondary" style={{ width: '300px' }}>
+    <div
+      className={`sidebar bg-custom-secondary transition-all pt-[20px] ${
+        hideSide ? 'w-[95px]' : 'w-[300px]'
+      }`}
+    >
       <ul className="p-0">
-        {Data.pages.dashboard.sidebar.map((name) => (
-          <SideLinks name={name} path={name} />
+        {Data.pages.dashboard.sidebar.map(({ name, path, icon }) => (
+          <SideLinks name={name} path={path} icon={icon} hideSide={hideSide} />
         ))}
       </ul>
     </div>
