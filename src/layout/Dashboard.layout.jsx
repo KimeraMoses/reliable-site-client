@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { element, bool } from 'prop-types';
+import { useMediaQuery } from 'react-responsive';
 import { SideBar, TopBar } from './components';
 import Data from '../db.json';
 
 export function DashboardLayout({ children, hide }) {
-  const [hideSide, setHideSide] = useState('');
   const [active, setActive] = useState('');
 
   const { pathname } = useLocation();
+
+  const lessThanDesktop = useMediaQuery({
+    query: '(max-width: 900px)',
+  });
+  const [hideSide, setHideSide] = useState(!!lessThanDesktop);
 
   useEffect(() => {
     const activeLink = Data.pages.dashboard.sidebar.filter((sideItem) => {
