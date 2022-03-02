@@ -90,3 +90,46 @@ For open source projects, say how it is licensed.
 
 ## Project status
 If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+
+# Instructions to Deploy
+
+Following are instructions on how to deploy both repositories using Node.js application.
+
+## Create Build:
+First of all you will need to create a build for both repositories. i.e. my-reliable-site-frontend and my-reliable-site-frontend-admin.
+## Rename and copy builds
+Then rename my-reliable-site-frontend build to client-build and rename my-reliable-site-frontend-admin build to admin-build
+## Creating a node.js app
+Then create a node.js application using
+`yarn init -y` or `npm init -y`
+Then install the required dependencies using
+`yarn add express`
+Then copy both builds i.e. client-build and admin-build into the root of the node.js app
+Then create a server.js file and paste the following code into it.
+```
+const express = require('express');
+const path = require('path');
+const PORT = process.env.PORT || 8080;
+const app = express();
+
+app.use(express.static(path.join(__dirname, 'build-client')));
+app.use(express.static(path.join(__dirname, 'build-admin')));
+app.get('/client*', function (req, res) {
+  return res.sendFile(path.resolve(__dirname, 'build-client', 'index.html'));
+});
+
+app.get('/admin*', function (req, res) {
+  return res.sendFile(path.resolve(__dirname, 'build-admin', 'index.html'));
+});
+
+//app listening on given port
+app.listen(PORT, () => {
+  console.info(`Server is up and running on port ${PORT}`);
+});
+```
+
+Now run the command
+`node server.js` in the root of your node.js app and you will be able to access both apps using /admin or /client
+
+## Deploy
+Deploy the newly created node.js application to any server and you'll be able to access the both apps using two separate routes.
