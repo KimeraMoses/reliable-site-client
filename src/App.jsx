@@ -12,11 +12,21 @@ function App() {
         <Router>
           <Routes>
             {pages.map(({ path, Component }) => (
-              <Route key={path} path={path} element={<Component />} exact />
+              <Route
+                key={path}
+                path={`/client${path}`}
+                element={<Component />}
+                exact
+              />
             ))}
-            <Route path="/dashboard">
+            <Route path="/client/dashboard">
               {dashboardPages.map(({ path, Component }) => (
-                <Route key={path} path={path} element={<Component />} exact />
+                <Route
+                  key={path}
+                  path={`/client${path}`}
+                  element={<Component />}
+                  exact
+                />
               ))}
             </Route>
             <Route path="*" element={<Error404 />} />
