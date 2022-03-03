@@ -1,22 +1,12 @@
-import { createStore, applyMiddleware } from 'redux';
-import { composeWithDevTools } from 'redux-devtools-extension';
-import reducer from './rootReducer';
+import { configureStore } from "@reduxjs/toolkit";
+import authReducer from "./Slices/authSlice";
+import regReducer from "./Slices/userRegistrationSlice";
 
-function configureState() {
-  const middleware = [];
-  let store;
-  if (process.env.NODE_ENV === 'development') {
-    store = createStore(
-      reducer,
-      composeWithDevTools(applyMiddleware(...middleware))
-    );
-  } else {
-    store = createStore(reducer, applyMiddleware(...middleware));
-  }
+const store = configureStore({
+  reducer: {
+    auth: authReducer,
+    reg: regReducer
+  },
+});
 
-  return {
-    ...store,
-  };
-}
-
-export const store = configureState();
+export default store;

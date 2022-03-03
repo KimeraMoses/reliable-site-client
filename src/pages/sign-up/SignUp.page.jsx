@@ -1,103 +1,134 @@
-/* eslint-disable jsx-a11y/label-has-associated-control */
-import React, { useState } from 'react';
-import Data from '../../db.json';
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
+import { signup } from "store/Actions/AuthActions";
+import Data from "../../db.json";
 // import {Link} from 'react-router-dom'
 
 function SignUp() {
-  const [username, setUsername] = useState('');
-  const [fullName, setFullName] = useState('');
-  const [emailAddress, setEmailaddress] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [address1, setAddress1] = useState('');
-  const [address2, setAddress2] = useState('');
-  const [city, setCity] = useState('');
-  const [stateProv, setStateProv] = useState('');
-  const [country, setCountry] = useState('');
-  const [zipCode, setZipCode] = useState('');
-  const [ipAddress, setIpAddress] = useState('');
+  const isLoading = useSelector(state=>state.reg.isLoading)
+  const dispatch = useDispatch();
+  const [values, setValues] = useState({
+    username: "",
+    fullName: "",
+    emailAddress: "",
+    password: "",
+    confirmPassword: "",
+    address1: "",
+    address2: "",
+    city: "",
+    stateProv: "",
+    zipCode: "",
+    ipAddress: "",
+  });
 
   const registerErrorsOb = {
-    username: '',
-    fullName: '',
-    emailAddress: '',
-    password: '',
-    confirmPassword: '',
-    address1: '',
-    address2: '',
-    city: '',
-    stateProv: '',
-    country: '',
-    zipCode: '',
-    ipAddress: '',
+    username: "",
+    fullName: "",
+    emailAddress: "",
+    password: "",
+    confirmPassword: "",
+    address1: "",
+    address2: "",
+    city: "",
+    stateProv: "",
+    country: "",
+    zipCode: "",
+    ipAddress: "",
   };
   const [errors, setErrors] = useState(registerErrorsOb);
 
-  const registerForm = (e) => {
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setValues({ ...values, [name]: value });
+    setErrors({ ...errors, [name]: "" });
+  };
+
+  const registerForm = async (e) => {
     e.preventDefault();
     let error = false;
     const registerErrorsObject = { ...registerErrorsOb };
-    if (username === '') {
-      registerErrorsObject.username = 'Please Enter Username';
+    if (values.username === "") {
+      registerErrorsObject.username = "Please Enter Username";
       error = true;
     }
-    if (fullName === '') {
-      registerErrorsObject.fullName = 'Please Enter Full Name';
+    if (values.fullName === "") {
+      registerErrorsObject.fullName = "Please Enter Full Name";
       error = true;
     }
-    if (emailAddress === '') {
-      registerErrorsObject.emailAddress = 'Enter Email';
+    if (values.emailAddress === "") {
+      registerErrorsObject.emailAddress = "Enter Email";
       error = true;
     }
-    if (password === '') {
-      registerErrorsObject.password = 'Please Enter Password';
+    if (values.password === "") {
+      registerErrorsObject.password = "Please Enter Password";
       error = true;
     }
-    if (confirmPassword !== password) {
-      registerErrorsObject.confirmPassword = 'Password Should Match';
+    if (values.confirmPassword !== values.password) {
+      registerErrorsObject.confirmPassword = "Password Should Match";
       error = true;
     }
-    if (address1 === '') {
-      registerErrorsObject.address1 = 'Please Enter Address 1 ';
+    if (values.address1 === "") {
+      registerErrorsObject.address1 = "Please Enter Address 1 ";
       error = true;
     }
-    if (address2 === '') {
-      registerErrorsObject.address2 = 'Please Enter Address 2';
+    if (values.address2 === "") {
+      registerErrorsObject.address2 = "Please Enter Address 2";
       error = true;
     }
-    if (city === '') {
-      registerErrorsObject.city = 'Please Enter City ';
+    if (values.city === "") {
+      registerErrorsObject.city = "Please Enter City ";
       error = true;
     }
-    if (stateProv === '') {
-      registerErrorsObject.stateProv = 'Please Enter State ';
+    if (values.stateProv === "") {
+      registerErrorsObject.stateProv = "Please Enter State ";
       error = true;
     }
-    if (country === '') {
-      registerErrorsObject.country = 'Please Enter Country ';
+    if (values.country === "") {
+      registerErrorsObject.country = "Please Enter Country ";
       error = true;
     }
-    if (stateProv === '') {
-      registerErrorsObject.stateProv = 'Please Enter State ';
+    if (values.stateProv === "") {
+      registerErrorsObject.stateProv = "Please Enter State ";
       error = true;
     }
-    if (zipCode === '') {
-      registerErrorsObject.zipCode = 'Please Enter Zip Code ';
+    if (values.zipCode === "") {
+      registerErrorsObject.zipCode = "Please Enter Zip Code ";
       error = true;
     }
-    if (ipAddress === '') {
-      registerErrorsObject.ipAddress = 'Please Enter Status ';
+    if (values.ipAddress === "") {
+      registerErrorsObject.ipAddress = "Please Enter Status ";
       error = true;
     }
-
-    setErrors(registerErrorsObject);
-    if (!error) {
-      console.log('form submitted');
+    return setErrors(registerErrorsObject);
+    try {
+      setErrors("");
+      await dispatch(signup(values.email, values.password));
+      toast.success("Account Created Successfully", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    } catch (error) {
+      toast.error("Failed to Login", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     }
   };
 
   return (
-    <div className="w-screen mx-auto my-5 " style={{ maxWidth: '536px' }}>
+    <div className="w-screen mx-auto my-5 " style={{ maxWidth: "536px" }}>
       <div className="col mx-4 md:mx-auto mb-5">
         <img src="/icon/logo.svg" className="h-20 w-20 mx-auto" alt="" />
       </div>
@@ -123,8 +154,9 @@ function SignUp() {
               className="w-full h-12 bg-custom-main rounded-md placeholder:text-gray-400 text-gray-400   placeholder:text-sm px-3  placeholder:font-light focus:outline-none"
               id="exampleInputEmail1"
               placeholder="Paul Elliott"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={values.username}
+              name="username"
+              onChange={handleChange}
             />
             {errors.username && (
               <span className="text-red-600 mt-2 flex">{errors.username}</span>
@@ -142,8 +174,9 @@ function SignUp() {
               className="w-full h-12 bg-custom-main rounded-md placeholder:text-gray-400 text-gray-400  placeholder:text-sm px-3  placeholder:font-light focus:outline-none"
               id="fullName"
               placeholder="Paul Elliott"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
+              value={values.fullName}
+              name="fullName"
+              onChange={handleChange}
             />
             {errors.fullName && (
               <span className="text-red-600 mt-2 flex">{errors.fullName}</span>
@@ -161,8 +194,9 @@ function SignUp() {
               className="w-full h-12 bg-custom-main rounded-md placeholder:text-gray-400 text-gray-400  placeholder:text-sm px-3  placeholder:font-light focus:outline-none"
               id="fullName"
               placeholder="Paul.Elliott@fakemail.com"
-              value={emailAddress}
-              onChange={(e) => setEmailaddress(e.target.value)}
+              value={values.emailAddress}
+              name="emailAddress"
+              onChange={handleChange}
             />
             {errors.emailAddress && (
               <span className="text-red-600 mt-2 flex">
@@ -184,8 +218,9 @@ function SignUp() {
               className="w-full h-14 bg-custom-main rounded-md placeholder:text-gray-400 text-gray-400 px-3 placeholder:text-sm placeholder:font-light focus:outline-none"
               id="exampleInputPassword1"
               placeholder="**********"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              name="password"
+              value={values.password}
+              onChange={handleChange}
             />
             {errors.password && (
               <span className="text-red-600 mt-2 flex">{errors.password}</span>
@@ -206,8 +241,9 @@ function SignUp() {
               className="w-full h-14 bg-custom-main rounded-md placeholder:text-gray-400 text-gray-400 px-3 placeholder:text-sm placeholder:font-light focus:outline-none"
               id="confirmPassword"
               placeholder="**********"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              value={values.confirmPassword}
+              name="confirmPassword"
+              onChange={handleChange}
             />
             {errors.confirmPassword && (
               <span className="text-red-600 mt-2 flex">
@@ -229,8 +265,9 @@ function SignUp() {
               className="w-full h-14 bg-custom-main rounded-md placeholder:text-gray-400 text-gray-400 px-3 placeholder:text-sm placeholder:font-light focus:outline-none"
               id="address1"
               placeholder="8546 West Philmont Rd"
-              value={address1}
-              onChange={(e) => setAddress1(e.target.value)}
+              value={values.address1}
+              name="address1"
+              onChange={handleChange}
             />
             {errors.address1 && (
               <span className="text-red-600 mt-2 flex">{errors.address1}</span>
@@ -250,8 +287,9 @@ function SignUp() {
               className="w-full h-14 bg-custom-main rounded-md placeholder:text-gray-400 text-gray-400 px-3 placeholder:text-sm placeholder:font-light focus:outline-none"
               id="address2"
               placeholder="Brooklyn"
-              value={address2}
-              onChange={(e) => setAddress2(e.target.value)}
+              value={values.address2}
+              name="address2"
+              onChange={handleChange}
             />
             {errors.address2 && (
               <span className="text-red-600 mt-2 flex">{errors.address2}</span>
@@ -270,8 +308,9 @@ function SignUp() {
                 className="w-full h-14 bg-custom-main rounded-md placeholder:text-gray-400 text-gray-400 px-3 placeholder:text-sm placeholder:font-light focus:outline-none"
                 id="city"
                 placeholder="New York"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
+                value={values.city}
+                name="city"
+                onChange={handleChange}
               />
               {errors.city && (
                 <span className="text-red-600 mt-2 flex">{errors.city}</span>
@@ -289,8 +328,9 @@ function SignUp() {
                 className="w-full h-14 bg-custom-main rounded-md placeholder:text-gray-400 text-gray-400 px-3 placeholder:text-sm placeholder:font-light focus:outline-none"
                 id="state"
                 placeholder="NY"
-                value={stateProv}
-                onChange={(e) => setStateProv(e.target.value)}
+                value={values.stateProv}
+                name="stateProv"
+                onChange={handleChange}
               />
               {errors.stateProv && (
                 <span className="text-red-600 mt-2 flex">
@@ -312,8 +352,9 @@ function SignUp() {
                 className="w-full h-14 bg-custom-main rounded-md placeholder:text-gray-400 text-gray-400 px-3 placeholder:text-sm placeholder:font-light focus:outline-none"
                 id="country"
                 placeholder="United States of America"
-                value={country}
-                onChange={(e) => setCountry(e.target.value)}
+                value={values.country}
+                name="country"
+                onChange={handleChange}
               />
               {errors.country && (
                 <span className="text-red-600 mt-2 flex">{errors.country}</span>
@@ -331,8 +372,9 @@ function SignUp() {
                 className="w-full h-14 bg-custom-main rounded-md placeholder:text-gray-400 text-gray-400 px-3 placeholder:text-sm placeholder:font-light focus:outline-none"
                 id="zipCode"
                 placeholder="11216"
-                value={zipCode}
-                onChange={(e) => setZipCode(e.target.value)}
+                value={values.zipCode}
+                name="zipCode"
+                onChange={handleChange}
               />
               {errors.zipCode && (
                 <span className="text-red-600 mt-2 flex">{errors.zipCode}</span>
@@ -353,8 +395,9 @@ function SignUp() {
               className="w-full h-14 bg-custom-main rounded-md placeholder:text-gray-400 text-gray-400 px-3 placeholder:text-sm placeholder:font-light focus:outline-none"
               id="ipAddress"
               placeholder="253.205.121.39"
-              value={ipAddress}
-              onChange={(e) => setIpAddress(e.target.value)}
+              value={values.ipAddress}
+              name="ipAddress"
+              onChange={handleChange}
             />
             {errors.ipAddress && (
               <span className="text-red-600 mt-2 flex">{errors.ipAddress}</span>
@@ -364,7 +407,7 @@ function SignUp() {
             type="submit"
             className="bg-blue-500 hover:bg-blue-700 text-white w-full mb-2 rounded-md h-14 hover:bg-sky-600/[.8] ease-in duration-200"
           >
-            {Data.pages.register.createAccountBtn}
+            {isLoading? "Creating account...": Data.pages.register.createAccountBtn}
           </button>
         </form>
       </div>

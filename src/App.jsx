@@ -1,13 +1,16 @@
 import React, { Suspense } from 'react';
+  import { ToastContainer } from 'react-toastify';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import pages, { Error404, dashboardPages } from 'pages';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'react-toastify/dist/ReactToastify.css';
 
 import './App.scss';
 
 function App() {
   return (
     <div className="App bg-custom-main flex items-center content-center">
+      <ToastContainer/>
       <Suspense fallback={<>Loading...</>}>
         <Router>
           <Routes>
