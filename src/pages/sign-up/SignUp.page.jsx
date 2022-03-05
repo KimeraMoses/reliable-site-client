@@ -7,7 +7,7 @@ import Data from "../../db.json";
 // import {Link} from 'react-router-dom'
 
 function SignUp() {
-  const isLoading = useSelector(state=>state.reg.isLoading)
+  const isLoading = useSelector((state) => state.reg.isLoading);
   const dispatch = useDispatch();
   const [values, setValues] = useState({
     username: "",
@@ -101,10 +101,28 @@ function SignUp() {
       registerErrorsObject.ipAddress = "Please Enter Status ";
       error = true;
     }
-    return setErrors(registerErrorsObject);
+    setErrors(registerErrorsObject);
     try {
       setErrors("");
-      await dispatch(signup(values.email, values.password));
+      console.log("reached!!")
+      await dispatch(
+        signup(
+          values.username,
+          values.fullName,
+          values.emailAddress,
+          values.password,
+          values.confirmPassword,
+          // values.com,
+          values.address1,
+          values.address2,
+          values.city,
+          values.stateProv,
+          values.zipCode,
+          values.country,
+
+          
+        )
+      );
       toast.success("Account Created Successfully", {
         position: "top-center",
         autoClose: 5000,
@@ -115,7 +133,7 @@ function SignUp() {
         progress: undefined,
       });
     } catch (error) {
-      toast.error("Failed to Login", {
+      toast.error("Failed to create account", {
         position: "top-center",
         autoClose: 5000,
         hideProgressBar: false,
@@ -407,7 +425,9 @@ function SignUp() {
             type="submit"
             className="bg-blue-500 hover:bg-blue-700 text-white w-full mb-2 rounded-md h-14 hover:bg-sky-600/[.8] ease-in duration-200"
           >
-            {isLoading? "Creating account...": Data.pages.register.createAccountBtn}
+            {isLoading
+              ? "Creating account..."
+              : Data.pages.register.createAccountBtn}
           </button>
         </form>
       </div>

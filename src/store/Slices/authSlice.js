@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   user: {},
   token: null,
+  rToken: null,
   isLoggedIn: false,
   status: "",
   message: null,
@@ -20,12 +21,23 @@ export const authSlice = createSlice({
       state.isLoggedIn = !!state.token;
       state.isLoading = false;
     },
+    initAuthenticationPending(state) {
+      state.isLoading = true;
+    },
+    initAuthenticationSuccess(state, { payload }) {
+      state.token = payload.token;
+      state.rToken = payload.refreshToken;
+      state.isLoading = false;
+    },
+    initAuthenticationFail(state, { payload }) {
+      state.isLoading = false;
+      state.message = payload;
+    },
     authenticationPending(state) {
       state.isLoading = true;
     },
     authenticationSuccess(state, { payload }) {
       state.user = payload.user;
-      state.token = payload.token;
       state.isLoggedIn = !!state.token;
       state.isLoading = false;
     },
@@ -53,7 +65,7 @@ export const authSlice = createSlice({
     updateUserRoleSuccess(state) {
       state.isLoading = false;
     },
-    updateUserRoleFail(state, {payload}) {
+    updateUserRoleFail(state, { payload }) {
       state.isLoading = false;
       state.message = payload.message;
       state.status = payload.status;
@@ -95,6 +107,9 @@ const { reducer, actions } = authSlice;
 
 export const {
   autoAuthenticationSuccess,
+  initAuthenticationPending,
+  initAuthenticationSuccess,
+  initAuthenticationFail,
   authenticationPending,
   authenticationSuccess,
   authenticationFail,

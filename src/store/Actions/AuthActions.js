@@ -3,6 +3,9 @@ import {
   authenticationPending,
   authenticationSuccess,
   autoAuthenticationSuccess,
+  initAuthenticationFail,
+  initAuthenticationPending,
+  initAuthenticationSuccess,
   logout,
 } from "store/Slices/authSlice";
 import {
@@ -11,45 +14,78 @@ import {
   UserRegistrationSuccess,
 } from "store/Slices/userRegistrationSlice";
 
-export const login = (email, password) => {
+// const AuthHeaders=(props)=>{
+
+//   return {
+//     "Content-type": "application/json",
+//      Authorization: "Bearer " + token,
+//     `${token? 'gen':'admin'}-api-key`: token? process.env.REACT_APP_GEN_APIKEY: process.env.REACT_APP_ADMIN_APIKEY,
+//     "tenant": "admin"
+//   }
+// }
+
+export const login = (userName, password) => {
   return async (dispatch) => {
-    dispatch(authenticationPending());
+    dispatch(initAuthenticationPending());
     const response = await fetch(
-      `${process.env.REACT_APP_BASEURL}/api/v1/users/login`,
+      `${process.env.REACT_APP_BASEURL}/api/tokens`,
       {
         method: "POST",
         body: JSON.stringify({
-          email,
+          userName,
           password,
         }),
         headers: new Headers({
           "Content-type": "application/json",
+          "admin-api-key": process.env.REACT_APP_ADMIN_APIKEY,
+          tenant: "admin",
         }),
       }
     );
     if (!response.ok) {
       const error = await response.json();
-      let message = "";
-      if (error.message === "invalid credentials") {
-        message =
-          "User not found, Please double check your credentials and try again";
-      } else if (error.error.statusCode === 403) {
-        message = "Please verify your account and try again";
-      } else {
-        message = "Failed to login, Please check your connection and try again";
-      }
-      dispatch(authenticationFail(message));
+      console.log("Login Error", error);
+      dispatch(initAuthenticationFail(error));
     }
-    const data = await response.json();
+    const res = await response.json();
+    console.log("Login", res);
+    dispatch(initAuthenticationSuccess(res.data));
+    dispatch(getUserProfile(res.data.token));
+    localStorage.setItem("AuthToken", JSON.stringify(res.data));
+
+    // SaveTokenInLocalStorage(dispatch, data);
+  };
+};
+
+export const getUserProfile = (token) => {
+  return async (dispatch) => {
+    dispatch(authenticationPending());
+    const response = await fetch(
+      `${process.env.REACT_APP_BASEURL}/api/identity/profile`,
+      {
+        method: "GET",
+        headers: new Headers({
+          "Content-type": "application/json",
+          "gen-api-key": process.env.REACT_APP_GEN_APIKEY,
+          tenant: "admin",
+          Authorization: "Bearer " + token,
+        }),
+      }
+    );
+    if (!response.ok) {
+      const error = await response.json();
+      console.log(error);
+      dispatch(authenticationFail(error));
+    }
+    const res = await response.json();
+    console.log(res);
     dispatch(
       authenticationSuccess({
-        data,
-        user: data.user,
-        token: data.token,
+        user: res.data,
       })
     );
 
-    SaveTokenInLocalStorage(dispatch, data);
+    SaveTokenInLocalStorage(dispatch, res.data);
   };
 };
 
@@ -87,33 +123,46 @@ export const login = (email, password) => {
 //   };
 
 export const signup = (
-  course,
+  firstName,
+  lastName,
   email,
-  first_name,
-  last_name,
-  phone_number,
-  university,
   password,
-  role
+  confirmPassword,
+  // companyName,
+  address1,
+  address2,
+  city,
+  state_Region,
+  zipCode,
+  country
+  // phoneNumber,
 ) => {
   return async (dispatch) => {
     dispatch(UserRegistrationPending());
+    console.log("Working...");
     const response = await fetch(
-      `${process.env.REACT_APP_BASEURL}/api/v1/users/signup`,
+      `${process.env.REACT_APP_BASEURL}/api/identity/register-user`,
       {
         method: "POST",
         body: JSON.stringify({
-          course,
+          firstName,
+          lastName,
           email,
-          first_name,
-          last_name,
-          phone_number,
-          university,
           password,
-          role,
+          confirmPassword,
+          // companyName,
+          address1,
+          address2,
+          city,
+          state_Region,
+          zipCode,
+          country,
+          // phoneNumber,
         }),
         headers: new Headers({
           "Content-type": "application/json",
+          "admin-api-key": process.env.REACT_APP_ADMIN_APIKEY,
+          tenant: "admin",
         }),
       }
     );
@@ -128,9 +177,11 @@ export const signup = (
           "Failed to create account, Please check your connection and try again";
       }
       dispatch(UserRegistrationFail(message));
+      console.log(error);
     }
     const data = await response.json();
-    dispatch(UserRegistrationSuccess(data.status));
+    dispatch(UserRegistrationSuccess(data));
+    console.log(data);
   };
 };
 
@@ -289,14 +340,14 @@ export const signup = (
 // };
 
 export const SaveTokenInLocalStorage = (dispatch, userDetails) => {
-  logOutTimer(dispatch, userDetails.expiresIn);
-  let AuthTokenDetails = {
-    token: userDetails.token,
-    expiresIn: userDetails.expiresIn,
-    expirationtime: userDetails.expirationtime,
-  };
-  localStorage.setItem("AuthToken", JSON.stringify(AuthTokenDetails));
-  localStorage.setItem("CurrentUser", JSON.stringify(userDetails.user));
+  // logOutTimer(dispatch, userDetails.expiresIn);
+  // let AuthTokenDetails = {
+  //   token: userDetails.token,
+  //   expiresIn: userDetails.expiresIn,
+  //   expirationtime: userDetails.expirationtime,
+  // };
+  // localStorage.setItem("AuthToken", JSON.stringify(AuthTokenDetails));
+  localStorage.setItem("CurrentUser", JSON.stringify(userDetails));
 };
 
 export const logOutTimer = (dispatch, timer) => {
@@ -305,7 +356,7 @@ export const logOutTimer = (dispatch, timer) => {
   }, timer);
 };
 
-export const AutoAuthenticate = (dispatch, history) => {
+export const AutoAuthenticate = (dispatch) => {
   const AuthToken = localStorage.getItem("AuthToken");
   const CurrentUser = localStorage.getItem("CurrentUser");
   let UserToken = "";
@@ -314,7 +365,7 @@ export const AutoAuthenticate = (dispatch, history) => {
     return;
   }
   UserToken = JSON.parse(AuthToken);
-  let expireDate = new Date(UserToken.expirationtime);
+  let expireDate = new Date(UserToken.refreshTokenExpiryTime);
   let todaysDate = new Date();
   if (todaysDate > expireDate) {
     return dispatch(logout());

@@ -14,6 +14,7 @@ function SignIn() {
   const [values, setValues] = useState({
     email: "",
     password: "",
+    username: ""
   });
   const dispatch = useDispatch();
   
@@ -21,31 +22,31 @@ function SignIn() {
     const { name, value } = event.target;
     setValues({ ...values, [name]: event.target.value });
 
-    if (name === "email" && value.email !== "undefined") {
-      setError("");
-      let pattern = new RegExp(
-        /^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i
-      );
-      if (!pattern.test(value)) {
-        setError("Please enter valid email address.");
-      }
-    }
+    // if (name === "email" && value.email !== "undefined") {
+    //   setError("");
+    //   let pattern = new RegExp(
+    //     /^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i
+    //   );
+    //   if (!pattern.test(value)) {
+    //     setError("Please enter valid email address.");
+    //   }
+    // }
     setError("");
   };
 
   const LoginHandler = async (e) => {
     e.preventDefault();
-    if (values.email.length < 5) {
-      return setError("A valid email is required to login");
-    }
+    // if (values.email.length < 5) {
+    //   return setError("A valid email is required to login");
+    // }
     if (values.password.length < 6) {
       return setError("Password must be atleast 6 characters");
     }
 
     try {
       setError("");
-      await dispatch(login(values.email, values.password));
-      setValues({ password: "", email: "" });
+      await dispatch(login(values.username, values.password));
+      setValues({ password: "", username: "" });
     } catch (error) {
       // return setError("Failed to login");
       toast.error("Failed to Login", {
@@ -94,9 +95,9 @@ function SignIn() {
                     {Data.pages.login.username}
                   </label>
                   <input
-                    type="email"
-                    name="email"
-                    value={values.email}
+                    type="text"
+                    name="username"
+                    value={values.username}
                     onChange={handleChange}
                     className="w-full h-12 bg-custom-main rounded-md text-gray-300 placeholder:text-gray-400 placeholder:text-sm px-3  placeholder:font-light focus:outline-none"
                     id="emailAddress"
