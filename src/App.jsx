@@ -7,7 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 import "./App.scss";
 import { useDispatch, useSelector } from "react-redux";
-import { AutoAuthenticate } from "store/Actions/AuthActions";
+import { AutoAuthenticate, maintenanceStatus } from "store/Actions/AuthActions";
 import SignIn from "pages/sign-in/SignIn.page";
 
 function App() {
@@ -16,6 +16,7 @@ function App() {
   const dispatch = useDispatch();
   useEffect(()=>{
     AutoAuthenticate(dispatch)
+    dispatch(maintenanceStatus())
   },[dispatch])
   return (
     <div className="App bg-custom-main flex items-center content-center">

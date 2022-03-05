@@ -8,6 +8,7 @@ import {
   initAuthenticationSuccess,
   logout,
 } from "store/Slices/authSlice";
+import { checkMaintenanceFail, checkMaintenancePending, checkMaintenanceSuccess } from "store/Slices/settingSlice";
 import {
   UserRegistrationFail,
   UserRegistrationPending,
@@ -38,7 +39,7 @@ export const login = (userName, password) => {
         headers: new Headers({
           "Content-type": "application/json",
           "admin-api-key": process.env.REACT_APP_ADMIN_APIKEY,
-          tenant: "admin",
+          "tenant": "admin",
         }),
       }
     );
@@ -67,7 +68,7 @@ export const getUserProfile = (token) => {
         headers: new Headers({
           "Content-type": "application/json",
           "gen-api-key": process.env.REACT_APP_GEN_APIKEY,
-          tenant: "admin",
+          "tenant": "admin",
           Authorization: "Bearer " + token,
         }),
       }
@@ -341,12 +342,6 @@ export const signup = (
 
 export const SaveTokenInLocalStorage = (dispatch, userDetails) => {
   // logOutTimer(dispatch, userDetails.expiresIn);
-  // let AuthTokenDetails = {
-  //   token: userDetails.token,
-  //   expiresIn: userDetails.expiresIn,
-  //   expirationtime: userDetails.expirationtime,
-  // };
-  // localStorage.setItem("AuthToken", JSON.stringify(AuthTokenDetails));
   localStorage.setItem("CurrentUser", JSON.stringify(userDetails));
 };
 
@@ -379,4 +374,31 @@ export const AutoAuthenticate = (dispatch) => {
 
   const timer = expireDate.getTime() - todaysDate.getTime();
   logOutTimer(dispatch, timer);
+};
+
+export const maintenanceStatus = (token) => {
+  return async (dispatch) => {
+    dispatch(checkMaintenancePending())
+    const response = await fetch(
+      `${process.env.REACT_APP_BASEURL}/api/v1/admin/admin/maintenancemode`,
+      {
+        method: "GET",
+        headers: new Headers({
+          "Content-type": "application/json",
+          "gen-api-key": process.env.REACT_APP_GEN_APIKEY,
+          "tenant": "admin",
+          Authorization: "Bearer " + token,
+        }),
+      }
+    );
+    if (!response.ok) {
+      const error = await response;
+      console.log(error);
+      // dispatch(checkMaintenanceFail(error));
+    }
+
+    const res = await response;
+    console.log(res)
+    // dispatch(checkMaintenanceSuccess())
+  };
 };
