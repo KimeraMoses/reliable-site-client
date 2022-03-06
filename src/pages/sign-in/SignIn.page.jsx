@@ -19,25 +19,12 @@ function SignIn() {
   const dispatch = useDispatch();
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setValues({ ...values, [name]: event.target.value });
-
-    // if (name === "email" && value.email !== "undefined") {
-    //   setError("");
-    //   let pattern = new RegExp(
-    //     /^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i
-    //   );
-    //   if (!pattern.test(value)) {
-    //     setError("Please enter valid email address.");
-    //   }
-    // }
+    setValues({ ...values, [name]: value });
     setError("");
   };
 
   const LoginHandler = async (e) => {
     e.preventDefault();
-    // if (values.email.length < 5) {
-    //   return setError("A valid email is required to login");
-    // }
     if (values.password.length < 6) {
       return setError("Password must be atleast 6 characters");
     }
@@ -46,8 +33,16 @@ function SignIn() {
       setError("");
       await dispatch(login(values.username, values.password));
       setValues({ password: "", username: "" });
+      toast.success("You have logged in successfuly", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     } catch (error) {
-      // return setError("Failed to login");
       toast.error("Failed to Login", {
         position: "top-center",
         autoClose: 5000,

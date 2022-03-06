@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { signup } from "store/Actions/AuthActions";
 import Data from "../../db.json";
@@ -9,6 +10,7 @@ import Data from "../../db.json";
 function SignUp() {
   const isLoading = useSelector((state) => state.reg.isLoading);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [values, setValues] = useState({
     username: "",
     fullName: "",
@@ -104,7 +106,7 @@ function SignUp() {
     setErrors(registerErrorsObject);
     try {
       setErrors("");
-      console.log("reached!!")
+      console.log("reached!!");
       await dispatch(
         signup(
           values.username,
@@ -112,17 +114,33 @@ function SignUp() {
           values.emailAddress,
           values.password,
           values.confirmPassword,
-          // values.com,
+          "comapnyname",
           values.address1,
           values.address2,
           values.city,
           values.stateProv,
           values.zipCode,
           values.country,
-
-          
+          "1234",
+          "0759130054",
+          "73749201",
+          "available"
         )
       );
+      setValues({
+        username: "",
+        fullName: "",
+        emailAddress: "",
+        password: "",
+        confirmPassword: "",
+        address1: "",
+        address2: "",
+        city: "",
+        stateProv: "",
+        zipCode: "",
+        ipAddress: "",
+      });
+      navigate("/client/sign-in");
       toast.success("Account Created Successfully", {
         position: "top-center",
         autoClose: 5000,
