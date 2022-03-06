@@ -49,59 +49,59 @@ function SignUp() {
 
   const registerForm = async (e) => {
     e.preventDefault();
-    let error = false;
+    
     const registerErrorsObject = { ...registerErrorsOb };
     if (values.username === "") {
       registerErrorsObject.username = "Please Enter Username";
-      error = true;
+      
     }
     if (values.fullName === "") {
       registerErrorsObject.fullName = "Please Enter Full Name";
-      error = true;
+      
     }
     if (values.emailAddress === "") {
       registerErrorsObject.emailAddress = "Enter Email";
-      error = true;
+      
     }
     if (values.password === "") {
       registerErrorsObject.password = "Please Enter Password";
-      error = true;
+      
     }
     if (values.confirmPassword !== values.password) {
       registerErrorsObject.confirmPassword = "Password Should Match";
-      error = true;
+      
     }
     if (values.address1 === "") {
       registerErrorsObject.address1 = "Please Enter Address 1 ";
-      error = true;
+      
     }
     if (values.address2 === "") {
       registerErrorsObject.address2 = "Please Enter Address 2";
-      error = true;
+      
     }
     if (values.city === "") {
       registerErrorsObject.city = "Please Enter City ";
-      error = true;
+      
     }
     if (values.stateProv === "") {
       registerErrorsObject.stateProv = "Please Enter State ";
-      error = true;
+      
     }
     if (values.country === "") {
       registerErrorsObject.country = "Please Enter Country ";
-      error = true;
+      
     }
     if (values.stateProv === "") {
       registerErrorsObject.stateProv = "Please Enter State ";
-      error = true;
+      
     }
     if (values.zipCode === "") {
       registerErrorsObject.zipCode = "Please Enter Zip Code ";
-      error = true;
+      
     }
     if (values.ipAddress === "") {
       registerErrorsObject.ipAddress = "Please Enter Status ";
-      error = true;
+      
     }
     setErrors(registerErrorsObject);
     try {

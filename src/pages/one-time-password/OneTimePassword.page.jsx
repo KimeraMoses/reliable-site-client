@@ -15,7 +15,7 @@ function OneTimePassword() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleChange = (event) => {
-    const { name, value } = event.target;
+    const { value } = event.target;
     setOtp(value);
     setError("");
   };

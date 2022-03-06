@@ -35,7 +35,7 @@ function App() {
 
   useEffect(() => {
     dispatch(checkMultiFactorAuth(user && user.id));
-  }, [user]);
+  }, [user, dispatch]);
   
   return (
     <div className="App bg-custom-main flex items-center content-center">
