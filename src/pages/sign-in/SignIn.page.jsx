@@ -16,7 +16,6 @@ import { accountSuspended } from "store/Slices/settingSlice";
 
 function SignIn() {
   const [isLoading, setIsLoading] = useState(false)
-
   const [error, setError] = useState("");
   const [values, setValues] = useState({
     email: "",
@@ -93,9 +92,9 @@ function SignIn() {
     e.preventDefault();
     setIsLoading(true)
     if (values.password.length < 6) {
+      setIsLoading(false)
       return setError("Password must be atleast 6 characters");
     }
-
     try {
       setError("");
       await dispatch(login(values.email, values.email, values.password));

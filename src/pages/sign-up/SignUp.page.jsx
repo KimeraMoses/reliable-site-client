@@ -145,7 +145,7 @@ function SignUp() {
         }
       );
     } catch (error) {
-      toast.error("Failed to create account", { ...messageNotifications });
+      toast.error("Error. Check all fields and try again", { ...messageNotifications });
     }
   };
 
