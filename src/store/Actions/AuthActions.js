@@ -3,15 +3,25 @@ import {
   authenticationPending,
   authenticationSuccess,
   autoAuthenticationSuccess,
+  confirmOtpFail,
+  confirmOtpPending,
+  confirmOtpSuccess,
+  forgotPasswordFail,
+  forgotPasswordPending,
+  forgotPasswordSuccess,
   initAuthenticationFail,
   initAuthenticationPending,
   initAuthenticationSuccess,
   logout,
+  resetPasswordFail,
+  resetPasswordPending,
+  resetPasswordSuccess,
+  verificationFail,
+  verificationPending,
+  verificationSuccess,
 } from "store/Slices/authSlice";
 import {
-  check2FAuthFail,
-  check2FAuthPending,
-  check2FAuthSuccess,
+  accountSuspended,
   checkMaintenanceFail,
   checkMaintenancePending,
   checkMaintenanceSuccess,
@@ -21,49 +31,6 @@ import {
   UserRegistrationPending,
   UserRegistrationSuccess,
 } from "store/Slices/userRegistrationSlice";
-
-// const AuthHeaders=(props)=>{
-
-//   return {
-//     "Content-type": "application/json",
-//      Authorization: "Bearer " + token,
-//     `${token? 'gen':'admin'}-api-key`: token? process.env.REACT_APP_GEN_APIKEY: process.env.REACT_APP_ADMIN_APIKEY,
-//     "tenant": "admin"
-//   }
-// }
-
-export const login = (userName, password) => {
-  return async (dispatch) => {
-    dispatch(initAuthenticationPending());
-    const response = await fetch(
-      `${process.env.REACT_APP_BASEURL}/api/tokens`,
-      {
-        method: "POST",
-        body: JSON.stringify({
-          userName,
-          password,
-        }),
-        headers: new Headers({
-          "Content-type": "application/json",
-          "admin-api-key": process.env.REACT_APP_ADMIN_APIKEY,
-          tenant: "admin",
-        }),
-      }
-    );
-    if (!response.ok) {
-      const error = await response.json();
-      console.log("Login Error", error);
-      dispatch(initAuthenticationFail(error));
-    }
-    const res = await response.json();
-    console.log("Login", res);
-    dispatch(initAuthenticationSuccess(res.data));
-    dispatch(getUserProfile(res.data.token));
-    localStorage.setItem("AuthToken", JSON.stringify(res.data));
-
-    // SaveTokenInLocalStorage(dispatch, data);
-  };
-};
 
 export const getUserProfile = (token) => {
   return async (dispatch) => {
@@ -76,17 +43,15 @@ export const getUserProfile = (token) => {
           "Content-type": "application/json",
           "gen-api-key": process.env.REACT_APP_GEN_APIKEY,
           tenant: "admin",
-          Authorization: "Bearer " + token,
+          Authorization: `Bearer ${token}`,
         }),
       }
     );
     if (!response.ok) {
       const error = await response.json();
-      console.log(error);
       dispatch(authenticationFail(error));
     }
     const res = await response.json();
-    console.log(res);
     dispatch(
       authenticationSuccess({
         user: res.data,
@@ -97,18 +62,69 @@ export const getUserProfile = (token) => {
   };
 };
 
-// {
-//   "firstName": "string",
-//   "lastName": "string",
-//   "email": "user@example.com",
-//   "userName": "string",
-//   "password": "string",
-//   "confirmPassword": "string",
-//   "phoneNumber": "string"
-// }
+export const login = (email, userName, password) => {
+  return async (dispatch) => {
+    dispatch(initAuthenticationPending());
+    const response = await fetch(
+      `${process.env.REACT_APP_BASEURL}/api/tokens`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          userName,
+          email,
+          password,
+        }),
+        headers: new Headers({
+          "Content-type": "application/json",
+          "admin-api-key": process.env.REACT_APP_ADMIN_APIKEY,
+          tenant: "admin",
+        }),
+      }
+    );
+    if (!response.ok) {
+      const error = await response.json();
+      dispatch(initAuthenticationFail(error));
+    }
+    const res = await response.json();
+    dispatch(initAuthenticationSuccess(res.data));
+    dispatch(getUserProfile(res.data.token));
+    localStorage.setItem("AuthToken", JSON.stringify(res.data));
+  };
+};
+
+export const loginbyOtp = (email, userName, otpCode) => {
+  return async (dispatch) => {
+    dispatch(initAuthenticationPending());
+    const response = await fetch(
+      `${process.env.REACT_APP_BASEURL}/api/tokens/gettokenbyotp`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          userName,
+          email,
+          otpCode,
+        }),
+        headers: new Headers({
+          "Content-type": "application/json",
+          "gen-api-key": process.env.REACT_APP_GEN_APIKEY,
+          tenant: "admin",
+        }),
+      }
+    );
+    if (!response.ok) {
+      const error = await response.json();
+      dispatch(initAuthenticationFail(error));
+    }
+    const res = await response.json();
+    dispatch(initAuthenticationSuccess(res.data));
+    dispatch(getUserProfile(res.data.token));
+    localStorage.setItem("AuthToken", JSON.stringify(res.data));
+  };
+};
+
 export const signup = (
-  firstName,
-  lastName,
+  FullName,
+  userName,
   email,
   password,
   confirmPassword,
@@ -120,28 +136,18 @@ export const signup = (
   zipCode,
   country,
   brandId,
-  phoneNumber,
-  parentID,
-  status
-
-  // firstName,
-  // lastName,
-  // email,
-  // userName,
-  // password,
-  // confirmPassword,
-  // phoneNumber
+  IpAddress,
+  parentID
 ) => {
   return async (dispatch) => {
     dispatch(UserRegistrationPending());
-    console.log("Working...");
     const response = await fetch(
-      `${process.env.REACT_APP_BASEURL}/api/identity/register-user`,
+      `${process.env.REACT_APP_BASEURL}/api/identity/register-client-user`,
       {
         method: "POST",
         body: JSON.stringify({
-          firstName,
-          lastName,
+          FullName,
+          userName,
           email,
           password,
           confirmPassword,
@@ -153,9 +159,8 @@ export const signup = (
           zipCode,
           country,
           brandId,
-          phoneNumber,
+          IpAddress,
           parentID,
-          status
         }),
         headers: new Headers({
           "Content-type": "application/json",
@@ -183,194 +188,108 @@ export const signup = (
   };
 };
 
-// export const updateProfile = (
-//   first_name,
-//   last_name,
-//   phone_number,
-//   AuthToken
-// ) => {
-//   return async (dispatch) => {
-//     dispatch(updateProfilePending());
-//     const response = await fetch(
-//       `${process.env.REACT_APP_BASEURL}/api/v1/users/updateMe`,
-//       {
-//         method: "PATCH",
-//         body: JSON.stringify({
-//           first_name,
-//           last_name,
-//           phone_number,
-//         }),
-//         headers: new Headers({
-//           "Content-type": "application/json",
-//           Authorization: "Bearer " + AuthToken,
-//         }),
-//       }
-//     );
-
-//     if (!response.ok) {
-//       const error = await response.json();
-//       dispatch(updateProfileFail(error));
-//     }
-//     const UserData = await response.json();
-//     dispatch(updateProfileSuccess(UserData));
-//     localStorage.setItem("CurrentUser", JSON.stringify(UserData.data.user));
-//   };
-// };
-
-// export const forgotPassword = (email) => {
-//   return async (dispatch) => {
-//     dispatch(forgotPasswordPending());
-//     const response = await fetch(
-//       `${process.env.REACT_APP_BASEURL}/api/v1/users/forgotPassword`,
-//       {
-//         method: "POST",
-//         body: JSON.stringify({
-//           email,
-//         }),
-//         headers: new Headers({
-//           "Content-type": "application/json",
-//         }),
-//       }
-//     );
-
-//     if (!response.ok) {
-//       const error = await response.json();
-//       dispatch(forgotPasswordFail(error));
-//     }
-//     const data = await response.json();
-//     dispatch(forgotPasswordSuccess(data));
-//   };
-// };
-// export const RequestAccountVerification = (email) => {
-//   return async (dispatch) => {
-//     dispatch(requestVerificationPending());
-//     const response = await fetch(
-//       `${process.env.REACT_APP_BASEURL}/api/v1/users/requestAccountVerification`,
-//       {
-//         method: "POST",
-//         body: JSON.stringify({
-//           email,
-//         }),
-//         headers: new Headers({
-//           "Content-type": "application/json",
-//         }),
-//       }
-//     );
-
-//     if (!response.ok) {
-//       const error = await response.json();
-//       dispatch(requestVerificationFail(error));
-//     }
-//     const data = await response.json();
-//     dispatch(requestVerificationSuccess(data));
-//   };
-// };
-// export const VerifyAccount = (verificationToken) => {
-//   return async (dispatch) => {
-//     dispatch(verificationPending());
-//     const response = await fetch(
-//       `${process.env.REACT_APP_BASEURL}/api/v1/users/verifyAccount/${verificationToken}`,
-//       {
-//         method: "PATCH",
-//       }
-//     );
-
-//     if (!response.ok) {
-//       const error = await response.json();
-//       dispatch(verificationFail(error));
-//     }
-//     const data = await response.json();
-//     dispatch(
-//       verificationSuccess({
-//         data,
-//         user: data.user,
-//         token: data.token,
-//       })
-//     );
-//     SaveTokenInLocalStorage(dispatch, data);
-//   };
-// };
-// export const passwordReset = (password, pwdResetToken) => {
-//   return async (dispatch) => {
-//     dispatch(UpdatePasswordPending());
-//     const response = await fetch(
-//       `${process.env.REACT_APP_BASEURL}/api/v1/users/resetPassword/${pwdResetToken}`,
-//       {
-//         method: "PATCH",
-//         body: JSON.stringify({
-//           password,
-//         }),
-//         headers: new Headers({
-//           "Content-type": "application/json",
-//         }),
-//       }
-//     );
-//     if (!response.ok) {
-//       const error = await response.json();
-//       dispatch(UpdatePasswordFail(error));
-//     }
-//     const data = await response.json();
-//     dispatch(UpdatePasswordSuccess(data));
-//   };
-// };
-
-// export const validateToken = (Token) => {
-//   return async (dispatch) => {
-//     // dispatch(validateTokenPending())
-//     const response = await fetch(
-//       `${process.env.REACT_APP_BASEURL}/api/v1/users/validate`,
-//       {
-//         method: "GET",
-//         headers: new Headers({
-//           Authorization: "Bearer " + Token,
-//         }),
-//       }
-//     );
-//     if (!response.ok) {
-//       const error = await response.json();
-//       // dispatch(logout());
-//       console.log("auto auth", error);
-//     }
-//     const data = await response.json();
-//     console.log("auto auth", data);
-//     // dispatch(autoAuthenticationSuccess(CurrentUser));
-//   };
-// };
-
-export const SaveTokenInLocalStorage = (dispatch, userDetails) => {
-  // logOutTimer(dispatch, userDetails.expiresIn);
-  localStorage.setItem("CurrentUser", JSON.stringify(userDetails));
+export const forgotPassword = (email) => {
+  return async (dispatch) => {
+    dispatch(forgotPasswordPending());
+    const response = await fetch(
+      `${process.env.REACT_APP_BASEURL}/api/identity/forgot-password`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          email,
+        }),
+        headers: new Headers({
+          "Content-type": "application/json",
+          "gen-api-key": process.env.REACT_APP_GEN_APIKEY,
+          tenant: "admin",
+        }),
+      }
+    );
+    if (!response.ok) {
+      const error = await response.json();
+      dispatch(forgotPasswordFail(error));
+    }
+    const data = await response.json();
+    dispatch(forgotPasswordSuccess(data));
+  };
 };
 
-export const logOutTimer = (dispatch, timer) => {
-  setTimeout(() => {
-    dispatch(logout());
-  }, timer);
+export const passwordReset = (email, password, confirmPassword, token) => {
+  return async (dispatch) => {
+    dispatch(resetPasswordPending());
+    const response = await fetch(
+      `${process.env.REACT_APP_BASEURL}/api/identity/reset-password`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          email,
+          password,
+          confirmPassword,
+          token,
+        }),
+        headers: new Headers({
+          "Content-type": "application/json",
+          tenant: "admin",
+          "gen-api-key": process.env.REACT_APP_GEN_APIKEY,
+        }),
+      }
+    );
+    if (!response.ok) {
+      const error = await response.json();
+      dispatch(resetPasswordFail(error));
+    }
+    const data = await response.json();
+    dispatch(resetPasswordSuccess(data));
+  };
+};
+
+export const validateEmailToken = (userId, code) => {
+  return async (dispatch) => {
+    dispatch(verificationPending());
+    const response = await fetch(
+      `${
+        process.env.REACT_APP_BASEURL
+      }/api/identity/confirm-email?userId=${userId}&code=${code.trim()}&tenant=admin`,
+      {
+        method: "GET",
+        headers: new Headers({
+          "gen-api-key": process.env.REACT_APP_GEN_APIKEY,
+        }),
+      }
+    );
+    if (!response.ok) {
+      const error = await response.json();
+      dispatch(verificationFail(error));
+    }
+    const data = await response.json();
+    dispatch(verificationSuccess(data));
+  };
 };
 
 export const AutoAuthenticate = (dispatch) => {
   const AuthToken = localStorage.getItem("AuthToken");
   const CurrentUser = localStorage.getItem("CurrentUser");
+  const suspended = localStorage.getItem("Account-Suspended");
+
+  if (!!suspended) {
+    dispatch(accountSuspended());
+  }
   let UserToken = "";
   if (!AuthToken) {
     dispatch(logout());
     return;
   }
   UserToken = JSON.parse(AuthToken);
-  let expireDate = new Date(UserToken.refreshTokenExpiryTime);
-  let todaysDate = new Date();
+  const expireDate = new Date(UserToken.refreshTokenExpiryTime);
+  const todaysDate = new Date();
   if (todaysDate > expireDate) {
     return dispatch(logout());
   }
-  let data = {
+  const data = {
     token: UserToken.token,
     user: JSON.parse(CurrentUser),
   };
-  // validateToken(UserToken)
   dispatch(autoAuthenticationSuccess(data));
-
-  const timer = expireDate.getTime() - todaysDate.getTime();
-  logOutTimer(dispatch, timer);
 };
 
 export const maintenanceStatus = (token) => {
@@ -388,78 +307,17 @@ export const maintenanceStatus = (token) => {
     );
     if (!response.ok) {
       const error = await response.json();
-      console.log("Maintenance mode error", error);
       dispatch(checkMaintenanceFail(error));
     }
 
     const res = await response.json();
-    console.log("Maintenance mode data", res);
     dispatch(checkMaintenanceSuccess(res));
-  };
-};
-
-export const checkMultiFactorAuth = (userId) => {
-  return async (dispatch) => {
-    dispatch(check2FAuthPending());
-    const response = await fetch(
-      `${process.env.REACT_APP_BASEURL}/api/mfauthenticator/getcurrentstatusoftwofactorauthentication`,
-      {
-        method: "POST",
-        body: JSON.stringify({
-          userId,
-        }),
-        headers: new Headers({
-          "Content-type": "application/json",
-          "admin-api-key": process.env.REACT_APP_ADMIN_APIKEY,
-          tenant: "admin",
-        }),
-      }
-    );
-    if (!response.ok) {
-      const error = await response.json();
-      console.log("MFA error", error);
-      dispatch(check2FAuthFail(error));
-    }
-
-    const res = await response.json();
-    console.log("MFA data", res);
-    dispatch(check2FAuthSuccess());
-  };
-};
-
-export const Enable2Authfactor = (userId, flag) => {
-  return async (dispatch) => {
-    // dispatch(enable2AuthPending())
-    const response = await fetch(
-      `${process.env.REACT_APP_BASEURL}/api/mfauthenticator/getcurrentstatusoftwofactorauthentication`,
-      {
-        method: "POST",
-        body: JSON.stringify({
-          userId,
-          flag,
-        }),
-        headers: new Headers({
-          "Content-type": "application/json",
-          "admin-api-key": process.env.REACT_APP_ADMIN_APIKEY,
-          tenant: "admin",
-        }),
-      }
-    );
-    if (!response.ok) {
-      const error = await response.json();
-      console.log("MFA error", error);
-      // dispatch(enable2AuthFail(error));
-    }
-
-    const res = await response.json();
-    console.log("MFA data", res);
-    // dispatch(enable2AuthSuccess())
   };
 };
 
 export const confirmOtp = (userId, otp) => {
   return async (dispatch) => {
-    // dispatch(confirmOtpPending())
+    dispatch(confirmOtpPending());
     const response = await fetch(
       `${process.env.REACT_APP_BASEURL}/api/mfauthenticator/validate-mfa`,
       {
@@ -477,12 +335,14 @@ export const confirmOtp = (userId, otp) => {
     );
     if (!response.ok) {
       const error = await response.json();
-      console.log("Confirm otp error", error);
-      // dispatch(confirmOtpFail(error));
+      dispatch(confirmOtpFail(error));
     }
 
     const res = await response.json();
-    console.log("Confirm otp data", res);
-    // dispatch(confirmOtpSuccess())
+    dispatch(confirmOtpSuccess(res));
   };
+};
+
+export const SaveTokenInLocalStorage = (dispatch, userDetails) => {
+  localStorage.setItem("CurrentUser", JSON.stringify(userDetails));
 };

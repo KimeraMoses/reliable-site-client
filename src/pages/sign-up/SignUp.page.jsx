@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { messageNotifications } from "store";
 import { signup } from "store/Actions/AuthActions";
 import Data from "../../db.json";
 // import {Link} from 'react-router-dom'
@@ -12,8 +12,9 @@ function SignUp() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [values, setValues] = useState({
-    username: "",
+    companyName: "",
     fullName: "",
+    lastName: "",
     emailAddress: "",
     password: "",
     confirmPassword: "",
@@ -26,8 +27,9 @@ function SignUp() {
   });
 
   const registerErrorsOb = {
-    username: "",
+    companyName: "",
     fullName: "",
+    lastName: "",
     emailAddress: "",
     password: "",
     confirmPassword: "",
@@ -47,89 +49,84 @@ function SignUp() {
     setErrors({ ...errors, [name]: "" });
   };
 
+  function useQuery() {
+    return new URLSearchParams(useLocation().search);
+  }
+  let query = useQuery();
+  const brandId = query.get("brandId");
+
   const registerForm = async (e) => {
     e.preventDefault();
-    
+
     const registerErrorsObject = { ...registerErrorsOb };
-    if (values.username === "") {
-      registerErrorsObject.username = "Please Enter Username";
-      
+    if (values.companyName === "") {
+      registerErrorsObject.companyName = "Please Enter Company Name";
     }
     if (values.fullName === "") {
-      registerErrorsObject.fullName = "Please Enter Full Name";
-      
+      registerErrorsObject.fullName = "Please Enter First Name";
+    }
+    if (values.lastName === "") {
+      registerErrorsObject.lastName = "Please Enter Last Name";
     }
     if (values.emailAddress === "") {
       registerErrorsObject.emailAddress = "Enter Email";
-      
     }
     if (values.password === "") {
       registerErrorsObject.password = "Please Enter Password";
-      
     }
     if (values.confirmPassword !== values.password) {
       registerErrorsObject.confirmPassword = "Password Should Match";
-      
     }
     if (values.address1 === "") {
       registerErrorsObject.address1 = "Please Enter Address 1 ";
-      
     }
     if (values.address2 === "") {
       registerErrorsObject.address2 = "Please Enter Address 2";
-      
     }
     if (values.city === "") {
       registerErrorsObject.city = "Please Enter City ";
-      
     }
     if (values.stateProv === "") {
       registerErrorsObject.stateProv = "Please Enter State ";
-      
     }
     if (values.country === "") {
       registerErrorsObject.country = "Please Enter Country ";
-      
     }
     if (values.stateProv === "") {
       registerErrorsObject.stateProv = "Please Enter State ";
-      
     }
     if (values.zipCode === "") {
       registerErrorsObject.zipCode = "Please Enter Zip Code ";
-      
     }
     if (values.ipAddress === "") {
       registerErrorsObject.ipAddress = "Please Enter Status ";
-      
     }
     setErrors(registerErrorsObject);
     try {
       setErrors("");
-      console.log("reached!!");
       await dispatch(
         signup(
-          values.username,
           values.fullName,
+          values.emailAddress,
           values.emailAddress,
           values.password,
           values.confirmPassword,
-          "comapnyname",
+          values.companyName,
           values.address1,
           values.address2,
           values.city,
           values.stateProv,
           values.zipCode,
           values.country,
-          "1234",
-          "0759130054",
-          "73749201",
-          "available"
+          brandId,
+          values.ipAddress,
+          "0"
         )
       );
       setValues({
-        username: "",
-        fullName: "",
+        companyName: "",
+        firstName: "",
+        lastName: "",
         emailAddress: "",
         password: "",
         confirmPassword: "",
@@ -141,25 +138,14 @@ function SignUp() {
         ipAddress: "",
       });
       navigate("/client/sign-in");
-      toast.success("Account Created Successfully", {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
+      toast.success(
+        "Account Created Successfully, Check your email to verify account",
+        {
+          ...messageNotifications,
+        }
+      );
     } catch (error) {
-      toast.error("Failed to create account", {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
+      toast.error("Failed to create account", { ...messageNotifications });
     }
   };
 
@@ -180,27 +166,7 @@ function SignUp() {
         <form onSubmit={registerForm}>
           <div className="mt-4 mb-3">
             <label
-              htmlFor="exampleInputEmail1"
-              className="form-label text-white font-light text-sm"
-            >
-              Username
-            </label>
-            <input
-              type="text"
-              className="w-full h-12 bg-custom-main rounded-md placeholder:text-gray-400 text-gray-400   placeholder:text-sm px-3  placeholder:font-light focus:outline-none"
-              id="exampleInputEmail1"
-              placeholder="Paul Elliott"
-              value={values.username}
-              name="username"
-              onChange={handleChange}
-            />
-            {errors.username && (
-              <span className="text-red-600 mt-2 flex">{errors.username}</span>
-            )}
-          </div>
-          <div className="mt-4 mb-3">
-            <label
-              htmlFor="fullName"
+              htmlFor="firstName"
               className="form-label text-white font-light text-sm"
             >
               Full Name
@@ -209,7 +175,7 @@ function SignUp() {
               type="text"
               className="w-full h-12 bg-custom-main rounded-md placeholder:text-gray-400 text-gray-400  placeholder:text-sm px-3  placeholder:font-light focus:outline-none"
               id="fullName"
-              placeholder="Paul Elliott"
+              placeholder="Paul"
               value={values.fullName}
               name="fullName"
               onChange={handleChange}
@@ -218,6 +184,7 @@ function SignUp() {
               <span className="text-red-600 mt-2 flex">{errors.fullName}</span>
             )}
           </div>
+          
           <div className="mt-4 mb-3">
             <label
               htmlFor="fullName"
@@ -284,6 +251,28 @@ function SignUp() {
             {errors.confirmPassword && (
               <span className="text-red-600 mt-2 flex">
                 {errors.confirmPassword}
+              </span>
+            )}
+          </div>
+          <div className="mt-4 mb-3">
+            <label
+              htmlFor="exampleInputEmail1"
+              className="form-label text-white font-light text-sm"
+            >
+              Company Name
+            </label>
+            <input
+              type="text"
+              className="w-full h-12 bg-custom-main rounded-md placeholder:text-gray-400 text-gray-400   placeholder:text-sm px-3  placeholder:font-light focus:outline-none"
+              id="exampleInputEmail1"
+              placeholder="Paul Elliott"
+              value={values.companyName}
+              name="companyName"
+              onChange={handleChange}
+            />
+            {errors.companyName && (
+              <span className="text-red-600 mt-2 flex">
+                {errors.companyName}
               </span>
             )}
           </div>

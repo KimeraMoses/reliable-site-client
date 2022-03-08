@@ -14,29 +14,40 @@ import "./App.scss";
 import { useDispatch, useSelector } from "react-redux";
 import {
   AutoAuthenticate,
-  checkMultiFactorAuth,
+  // checkMultiFactorAuth,
   maintenanceStatus,
 } from "store/Actions/AuthActions";
+
 const SignIn = React.lazy(() => import("pages/sign-in/SignIn.page"));
 const SignUp = React.lazy(() => import("pages/sign-up/SignUp.page"));
+const ResetPassword = React.lazy(() =>
+  import("pages/reset-password/ResetPassword.page")
+);
+const ForgotPassword = React.lazy(() =>
+  import("pages/forgot-password/ForgotPassword.page")
+);
+const EmailVerification = React.lazy(() =>
+  import("pages/email-verification/EmailVerification.page")
+);
+const ConfirmOtp = React.lazy(() =>
+  import("pages/one-time-password/OneTimePassword.page")
+);
 const UnderMaintenance = React.lazy(() =>
   import("pages/under-maintenance/UnderMaintenance.page")
 );
+const SuspendedAccount = React.lazy(() =>
+  import("pages/account-suspended/AccountSuspended.page")
+);
 
 function App() {
-  const { user } = useSelector((state) => state.auth);
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
-  const { maintenance, is2faEnabled } = useSelector((state) => state.settings);
+  const { maintenance, suspended } = useSelector((state) => state.settings);
   const dispatch = useDispatch();
   useEffect(() => {
     AutoAuthenticate(dispatch);
     dispatch(maintenanceStatus());
   }, [dispatch]);
 
-  useEffect(() => {
-    dispatch(checkMultiFactorAuth(user && user.id));
-  }, [user, dispatch]);
-  
   return (
     <div className="App bg-custom-main flex items-center content-center">
       <ToastContainer />
@@ -44,6 +55,64 @@ function App() {
         <Router>
           <Routes>
             <Route path="/" element={<Navigate to="/client/sign-in" />} />
+            <Route
+              path="/client/account-suspended"
+              element={
+                !suspended ? (
+                  <Navigate to="/client/sign-in" />
+                ) : (
+                  <SuspendedAccount />
+                )
+              }
+            />
+            <Route
+              path="/client/verify-email/:userId"
+              element={
+                suspended ? (
+                  <Navigate to="/client/account-suspended" />
+                ) : isLoggedIn ? (
+                  <Navigate to="/client/dashboard" />
+                ) : (
+                  <EmailVerification />
+                )
+              }
+            />
+            <Route
+              path="/reset-password"
+              element={
+                suspended ? (
+                  <Navigate to="/client/account-suspended" />
+                ) : isLoggedIn ? (
+                  <Navigate to="/client/dashboard" />
+                ) : (
+                  <ResetPassword />
+                )
+              }
+            />
+            <Route
+              path="/client/forgot-password"
+              element={
+                suspended ? (
+                  <Navigate to="/client/account-suspended" />
+                ) : isLoggedIn ? (
+                  <Navigate to="/client/dashboard" />
+                ) : (
+                  <ForgotPassword />
+                )
+              }
+            />
+            <Route
+              path="/client/one-time-password"
+              element={
+                suspended ? (
+                  <Navigate to="/client/account-suspended" />
+                ) : isLoggedIn ? (
+                  <Navigate to="/client/dashboard" />
+                ) : (
+                  <ConfirmOtp />
+                )
+              }
+            />
             <Route
               path="/under-maintenance"
               element={
@@ -61,8 +130,6 @@ function App() {
               element={
                 maintenance ? (
                   <Navigate to="/under-maintenance" />
-                ) : is2faEnabled ? (
-                  <Navigate to="/client/one-time-password" />
                 ) : isLoggedIn ? (
                   <Navigate to="/client/dashboard" />
                 ) : (
@@ -90,7 +157,9 @@ function App() {
                   key={path}
                   path={`/client${path}`}
                   element={
-                    maintenance ? (
+                    suspended ? (
+                      <Navigate to="/client/account-suspended" />
+                    ) : maintenance ? (
                       <Navigate to="/under-maintenance" />
                     ) : !isLoggedIn ? (
                       <Navigate to="/client/sign-in" />

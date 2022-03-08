@@ -1,13 +1,13 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   isLoading: false,
   maintenance: false,
-  is2faEnabled: false,
+  suspended: false,
   message: null,
 };
 const settingSlice = createSlice({
-  name: "settings",
+  name: 'settings',
   initialState,
   reducers: {
     checkMaintenancePending: (state) => {
@@ -21,17 +21,9 @@ const settingSlice = createSlice({
       state.isLoading = false;
       state.message = payload;
     },
-    check2FAuthPending: (state)=>{
-        state.isLoading = true;
+    accountSuspended: (state) => {
+      state.suspended = true;
     },
-    check2FAuthSuccess: (state, {payload})=>{
-        state.isLoading = false;
-        state.is2faEnabled = payload.is2faEnabled
-    },
-    check2FAuthFail: (state, {payload})=>{
-        state.isLoading= false;
-        state.message = payload
-    }
 
   },
 });
@@ -42,8 +34,6 @@ export const {
   checkMaintenancePending,
   checkMaintenanceSuccess,
   checkMaintenanceFail,
-  check2FAuthPending,
-  check2FAuthSuccess,
-  check2FAuthFail
+  accountSuspended,
 } = actions;
 export default reducer;

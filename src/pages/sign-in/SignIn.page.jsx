@@ -1,26 +1,88 @@
 import { Alert } from "react-bootstrap";
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { login } from "store/Actions/AuthActions";
+import { getUserProfile } from "store/Actions/AuthActions";
 import Data from "../../db.json";
 import "./SignIn.css";
-import { useSelector } from "react-redux";
+import { messageNotifications } from "store";
+import {
+  initAuthenticationFail,
+  initAuthenticationPending,
+  initAuthenticationSuccess,
+} from "store/Slices/authSlice";
+import { accountSuspended } from "store/Slices/settingSlice";
 
 function SignIn() {
-  const isLoading = useSelector(state=>state.auth.isLoading);
+  const isLoading = useSelector((state) => state.auth.isLoading);
   const [error, setError] = useState("");
   const [values, setValues] = useState({
     email: "",
     password: "",
-    username: ""
+    username: "",
   });
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const handleChange = (event) => {
     const { name, value } = event.target;
     setValues({ ...values, [name]: value });
     setError("");
+  };
+  let has2faEnabled = false;
+  const login = (email, userName, password) => {
+    return async (dispatch) => {
+      dispatch(initAuthenticationPending());
+      const response = await fetch(
+        `${process.env.REACT_APP_BASEURL}/api/tokens`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            userName,
+            email,
+            password,
+          }),
+          headers: new Headers({
+            "Content-type": "application/json",
+            "admin-api-key": process.env.REACT_APP_ADMIN_APIKEY,
+            "tenant": "admin",
+          }),
+        }
+      );
+      if (!response.ok) {
+        const error = await response.json();
+
+        if (error.exception.includes("User Not Active")) {
+          has2faEnabled = true;
+          localStorage.setItem("Account-Suspended", true);
+          dispatch(accountSuspended());
+          navigate("/client/account-suspended");
+
+          toast.error(
+            "Account has been suspended, Please contact administration",
+            {
+              ...messageNotifications,
+            }
+          );
+        }
+        dispatch(initAuthenticationFail(error));
+      }
+      const res = await response.json();
+   
+      if (res.messages[0]) {
+        has2faEnabled = true;
+        navigate("/client/one-time-password");
+        localStorage.setItem("userId", res.messages[1]);
+        localStorage.setItem("userEmail", res.messages[2]);
+        toast.error("Please verify otp to login", {
+          ...messageNotifications,
+        });
+      }
+      localStorage.removeItem("Account-Suspended");
+      dispatch(initAuthenticationSuccess(res.data));
+      dispatch(getUserProfile(res.data.token));
+      localStorage.setItem("AuthToken", JSON.stringify(res.data));
+    };
   };
 
   const LoginHandler = async (e) => {
@@ -31,27 +93,17 @@ function SignIn() {
 
     try {
       setError("");
-      await dispatch(login(values.username, values.password));
+      await dispatch(login(values.email, values.email, values.password));
       setValues({ password: "", username: "" });
       toast.success("You have logged in successfuly", {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
+        ...messageNotifications,
       });
-    } catch (error) {
-      toast.error("Failed to Login", {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
+    } catch (err) {
+      if (!has2faEnabled) {
+        toast.error("Failed to Login, Please check your credentials", {
+          ...messageNotifications,
+        });
+      }
     }
   };
 
@@ -73,9 +125,9 @@ function SignIn() {
                   {Data.pages.login.title}
                 </h2>
                 <p className="custom-text-light">
-                  New here? {" "}
+                  New here?{" "}
                   <span className="text-blue-400">
-                    <Link to="/client/sign-up">Click Here</Link>{" "}
+                    <Link to="/client/sign-up?brandId=2341">Click Here</Link>{" "}
                   </span>
                   to create an account.
                 </p>
@@ -90,8 +142,8 @@ function SignIn() {
                   </label>
                   <input
                     type="text"
-                    name="username"
-                    value={values.username}
+                    name="email"
+                    value={values.email}
                     onChange={handleChange}
                     className="w-full h-12 bg-custom-main rounded-md text-gray-300 placeholder:text-gray-400 placeholder:text-sm px-3  placeholder:font-light focus:outline-none"
                     id="emailAddress"
@@ -106,9 +158,12 @@ function SignIn() {
                     >
                       {Data.pages.login.password}
                     </label>
-                    <span className="text-blue-400 font-light text-sm cursor-pointer">
+                    <Link
+                      to="/client/forgot-password"
+                      className="text-blue-400 font-light text-sm cursor-pointer"
+                    >
                       {Data.pages.login.forgotPassword}
-                    </span>
+                    </Link>
                   </div>
                   <input
                     type="password"
@@ -125,7 +180,7 @@ function SignIn() {
                     type="submit"
                     className="bg-blue-500 hover:bg-blue-700 ease-in duration-200 text-white w-full mb-2 rounded-md h-14"
                   >
-                    {isLoading? "Logging in...": Data.pages.login.loginButton}
+                    {isLoading ? "Logging in..." : Data.pages.login.loginButton}
                   </button>
                 </div>
               </form>

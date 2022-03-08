@@ -6,7 +6,7 @@
       "username": "Email Address",
       "password": "Password",
       "placeholder": "Paul.Elliot@fakemail.com",
-      "ForgotPassword": "Forgot Password?",
+      "forgotPassword": "Forgot Password?",
       "loginButton": "Sign In To Your Account"
     },
     "emailVerification": {
@@ -38,7 +38,7 @@
     },
     "underMaintenance": {
       "title": "Under Maintenance",
-      "description": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat."
+      "description": "This is a scheduled maintenance. We'll be back shortly."
     },
     "accountSuspended": {
       "title": "Account Suspended",

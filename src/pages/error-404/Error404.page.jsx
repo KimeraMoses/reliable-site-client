@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 function Error404() {
   return (
@@ -8,10 +8,8 @@ function Error404() {
           <img src="/icon/logo.svg" alt="" className="w-20 h-20" />
           <h3 className="text-4xl text-white font-normal mt-5">Error 404</h3>
           <p className=" mb-5 text-base custom-text-light">
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-            Necessitatibus obcaecati consequatur possimus velit? Corporis vel
-            magnam maiores hic et tempora, nulla voluptatem officia harum autem
-            asperiores, doloremque deleniti id totam!
+            The page requested is not found on this server. If you think this is
+            an error, please contact support.
           </p>
         </div>
       </div>

@@ -1,12 +1,12 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   isLoading: false,
-  status: "",
+  status: '',
   message: null,
 };
 const userRegistrationSlice = createSlice({
-  name: "registration",
+  name: 'registration',
   initialState,
   reducers: {
     UserRegistrationPending: (state) => {

@@ -1,19 +1,19 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   user: {},
   token: null,
   rToken: null,
   isLoggedIn: false,
-  status: "",
+  status: '',
   message: null,
-  updateStatus: "",
+  updateStatus: '',
   isLoading: false,
 };
 
 export const authSlice = createSlice({
   initialState,
-  name: "authSlice",
+  name: 'authSlice',
   reducers: {
     autoAuthenticationSuccess(state, { payload }) {
       state.user = payload.user;
@@ -59,47 +59,43 @@ export const authSlice = createSlice({
       state.message = payload.message;
       state.status = payload.status;
     },
-    updateUserRolePending(state) {
+    forgotPasswordPending(state) {
       state.isLoading = true;
     },
-    updateUserRoleSuccess(state) {
+    forgotPasswordSuccess(state) {
       state.isLoading = false;
     },
-    updateUserRoleFail(state, { payload }) {
+    forgotPasswordFail(state, { payload }) {
       state.isLoading = false;
       state.message = payload.message;
       state.status = payload.status;
     },
-
-    updateProfilePending(state) {
+    resetPasswordPending(state) {
       state.isLoading = true;
     },
-    updateProfileSuccess(state, { payload }) {
-      state.user = payload.data.user;
+    resetPasswordSuccess(state, { payload }) {
       state.isLoading = false;
     },
-    updateProfileFail(state, { payload }) {
+    resetPasswordFail(state, { payload }) {
       state.isLoading = false;
-      state.message = payload.message;
-      state.status = payload.status;
     },
-    UpdateUserCourseUnitsPending(state) {
-      state.isLoading = true;
+    confirmOtpPending(state){
+      state.isLoading =true
     },
-    UpdateUserCourseUnitsSuccess(state, { payload }) {
+    confirmOtpSuccess(state, {payload}){
       state.isLoading = false;
-      state.user = payload.user;
+      state.message = payload
     },
-    UpdateUserCourseUnitsFail(state, { payload }) {
+    confirmOtpFail(state, {payload}){
       state.isLoading = false;
-      state.updateStatus = payload.sucess;
+      state.message = payload
     },
     logout(state) {
       state.user = {};
       state.token = null;
       state.isLoggedIn = false;
-      localStorage.removeItem("AuthToken");
-      localStorage.removeItem("CurrentUser");
+      localStorage.removeItem('AuthToken');
+      localStorage.removeItem('CurrentUser');
     },
   },
 });
@@ -116,15 +112,15 @@ export const {
   verificationPending,
   verificationSuccess,
   verificationFail,
-  updateProfilePending,
-  updateProfileSuccess,
-  updateProfileFail,
-  UpdateUserCourseUnitsPending,
-  UpdateUserCourseUnitsSuccess,
-  UpdateUserCourseUnitsFail,
-  updateUserRolePending,
-  updateUserRoleSuccess,
-  updateUserRoleFail,
+  resetPasswordPending,
+  resetPasswordSuccess,
+  resetPasswordFail,
+  forgotPasswordPending,
+  forgotPasswordSuccess,
+  forgotPasswordFail,
+  confirmOtpPending,
+  confirmOtpSuccess,
+  confirmOtpFail,
   logout,
 } = actions;
 
