@@ -1,6 +1,6 @@
 import { Alert } from "react-bootstrap";
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { getUserProfile } from "store/Actions/AuthActions";
@@ -15,7 +15,8 @@ import {
 import { accountSuspended } from "store/Slices/settingSlice";
 
 function SignIn() {
-  const isLoading = useSelector((state) => state.auth.isLoading);
+  const [isLoading, setIsLoading] = useState(false)
+
   const [error, setError] = useState("");
   const [values, setValues] = useState({
     email: "",
@@ -45,13 +46,16 @@ function SignIn() {
           headers: new Headers({
             "Content-type": "application/json",
             "admin-api-key": process.env.REACT_APP_ADMIN_APIKEY,
-            "tenant": "admin",
+            tenant: "admin",
           }),
         }
       );
       if (!response.ok) {
         const error = await response.json();
-
+        if(error.exception ==="User Not Found."){
+          setError("User Not found, Please check your credentials")
+        }
+        // console.log("Login error", error);
         if (error.exception.includes("User Not Active")) {
           has2faEnabled = true;
           localStorage.setItem("Account-Suspended", true);
@@ -68,13 +72,13 @@ function SignIn() {
         dispatch(initAuthenticationFail(error));
       }
       const res = await response.json();
-   
+      // console.log("login data", res);
       if (res.messages[0]) {
         has2faEnabled = true;
         navigate("/client/one-time-password");
         localStorage.setItem("userId", res.messages[1]);
         localStorage.setItem("userEmail", res.messages[2]);
-        toast.error("Please verify otp to login", {
+        toast.success("Please verify otp to login", {
           ...messageNotifications,
         });
       }
@@ -87,6 +91,7 @@ function SignIn() {
 
   const LoginHandler = async (e) => {
     e.preventDefault();
+    setIsLoading(true)
     if (values.password.length < 6) {
       return setError("Password must be atleast 6 characters");
     }
@@ -98,9 +103,11 @@ function SignIn() {
       toast.success("You have logged in successfuly", {
         ...messageNotifications,
       });
+      setIsLoading(false)
     } catch (err) {
+      setIsLoading(false)
       if (!has2faEnabled) {
-        toast.error("Failed to Login, Please check your credentials", {
+        toast.error("Failed to Login", {
           ...messageNotifications,
         });
       }

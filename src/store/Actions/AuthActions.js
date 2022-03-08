@@ -180,11 +180,9 @@ export const signup = (
           "Failed to create account, Please check your connection and try again";
       }
       dispatch(UserRegistrationFail(message));
-      console.log(error);
     }
     const data = await response.json();
     dispatch(UserRegistrationSuccess(data));
-    console.log(data);
   };
 };
 
