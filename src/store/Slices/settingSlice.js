@@ -24,7 +24,6 @@ const settingSlice = createSlice({
     accountSuspended: (state) => {
       state.suspended = true;
     },
-
   },
 });
 

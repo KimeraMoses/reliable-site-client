@@ -79,16 +79,16 @@ export const authSlice = createSlice({
     resetPasswordFail(state, { payload }) {
       state.isLoading = false;
     },
-    confirmOtpPending(state){
-      state.isLoading =true
+    confirmOtpPending(state) {
+      state.isLoading = true;
     },
-    confirmOtpSuccess(state, {payload}){
+    confirmOtpSuccess(state, { payload }) {
       state.isLoading = false;
-      state.message = payload
+      state.message = payload;
     },
-    confirmOtpFail(state, {payload}){
+    confirmOtpFail(state, { payload }) {
       state.isLoading = false;
-      state.message = payload
+      state.message = payload;
     },
     logout(state) {
       state.user = {};

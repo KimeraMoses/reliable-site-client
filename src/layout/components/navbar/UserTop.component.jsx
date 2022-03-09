@@ -26,7 +26,9 @@ function UserTop() {
       {!lessThanDesktop && (
         <>
           <div className="text-base mx-3">
-            <h3 className="text-white text-base mb-0">{user && user.fullName}</h3>
+            <h3 className="text-white text-base mb-0">
+              {user && user.fullName}
+            </h3>
             <p className="text-gray-400 mb-0">{user && user.email}</p>
           </div>
           <div className="h-12 w-12 bg-gray-700 flex items-center justify-center rounded-lg">

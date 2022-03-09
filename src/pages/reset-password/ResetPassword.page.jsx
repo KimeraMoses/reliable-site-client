@@ -1,11 +1,13 @@
-import React, { useState } from "react";
-import { Alert } from "react-bootstrap";
-import { useDispatch } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import { messageNotifications } from "store";
-import { passwordReset } from "store/Actions/AuthActions";
-import Data from "../../db.json";
+import React, { useState } from 'react';
+import { Alert } from 'react-bootstrap';
+import { useDispatch } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { Formik, Form, Field } from 'formik';
+import * as Yup from 'yup';
+import { messageNotifications } from 'store';
+import { passwordReset } from 'store/Actions/AuthActions';
+import Data from '../../db.json';
 
 function ResetPassword() {
   const dispatch = useDispatch();
@@ -14,17 +16,17 @@ function ResetPassword() {
   function useQuery() {
     return new URLSearchParams(useLocation().search);
   }
-  let query = useQuery();
-  const token = query.get("resetToken");
+  const query = useQuery();
+  const token = query.get('resetToken');
 
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [values, setValues] = useState({
-    password: "",
-    confirmPassword: "",
+    password: '',
+    confirmPassword: '',
   });
 
   const handleOnChange = (event) => {
-    setError("");
+    setError('');
     const { name, value } = event.target;
     setValues({ ...values, [name]: value });
   };
@@ -32,36 +34,36 @@ function ResetPassword() {
   const passwordResetSubmitHandler = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    let userEmail = localStorage.getItem("userEmail");
+    const userEmail = localStorage.getItem('userEmail');
     if (values.password.length < 6) {
-      return setError("Password must be atleast 6 characters");
+      return setError('Password must be atleast 6 characters');
     }
     if (values.confirmPassword.length < 1) {
-      return setError("Please confirm new password");
+      return setError('Please confirm new password');
     }
     if (values.password !== values.confirmPassword) {
-      return setError("Passwords do not match");
+      return setError('Passwords do not match');
     }
     try {
-      setError("");
+      setError('');
       await dispatch(
         passwordReset(userEmail, values.password, values.confirmPassword, token)
       );
       setIsLoading(false);
-      setValues({ values: "" });
-      navigate("/client/sign-in");
-      toast.success("Password changed successfully", {
+      setValues({ values: '' });
+      navigate('/client/sign-in');
+      toast.success('Password changed successfully', {
         ...messageNotifications,
       });
-    } catch (error) {
+    } catch (err) {
       setIsLoading(false);
-      toast.error("Failed to reset Password", { ...messageNotifications });
+      toast.error('Failed to reset Password', { ...messageNotifications });
     }
   };
 
   return (
     <div className="h-screen w-full flex items-center justify-content-center">
-      <div className="col" style={{ maxWidth: "536px" }}>
+      <div className="col" style={{ maxWidth: '536px' }}>
         <div className="flex items-center justify-center mb-5">
           <img src="/icon/logo.svg" alt="" className="h-20 w-20" />
         </div>
@@ -114,7 +116,7 @@ function ResetPassword() {
             <div className="flex mt-4 md:mt-5">
               <button
                 type="button"
-                onClick={() => navigate("/client/sign-in")}
+                onClick={() => navigate('/client/sign-in')}
                 className="bg-blue-900/[.3] w-full mb-2 rounded-md h-12 text-blue-500 hover:bg-blue-900/[.1] ease-in duration-200"
               >
                 {Data.pages.resetPassword.cancelBtn}
@@ -124,7 +126,7 @@ function ResetPassword() {
                 className="bg-blue-500 hover:bg-blue-700 w-full h-12 rounded-md text-white font-light ml-2 ease-in duration-200"
               >
                 {isLoading
-                  ? "Resetting..."
+                  ? 'Resetting...'
                   : Data.pages.resetPassword.submitBtn}
               </button>
             </div>

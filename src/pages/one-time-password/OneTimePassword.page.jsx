@@ -1,47 +1,47 @@
-import React, { useState } from "react";
-import { Alert } from "react-bootstrap";
-import { useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import { messageNotifications } from "store";
-import { confirmOtp, loginbyOtp } from "store/Actions/AuthActions";
-import Data from "../../db.json";
+import React, { useState } from 'react';
+import { Alert } from 'react-bootstrap';
+import { useDispatch } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { messageNotifications } from 'store';
+import { confirmOtp, loginbyOtp } from 'store/Actions/AuthActions';
+import Data from '../../db.json';
 
 function OneTimePassword() {
-  const [otp, setOtp] = useState("");
-  const [error, setError] = useState("");
+  const [otp, setOtp] = useState('');
+  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleChange = (event) => {
     const { value } = event.target;
     setOtp(value);
-    setError("");
+    setError('');
   };
 
   const OtpHandler = async (e) => {
     e.preventDefault();
-    let userId = localStorage.getItem("userId");
-    let userEmail = localStorage.getItem("userEmail");
+    const userId = localStorage.getItem('userId');
+    const userEmail = localStorage.getItem('userEmail');
     setIsLoading(true);
     if (otp.length < 1) {
-      return setError("Pleasee enter OTP recieved on your email");
+      return setError('Pleasee enter OTP recieved on your email');
     }
     try {
       await dispatch(confirmOtp(userId, otp));
-      toast.success("Otp verified Successfully", {...messageNotifications});
-      setOtp("");
+      toast.success('Otp verified Successfully', { ...messageNotifications });
+      setOtp('');
       setIsLoading(false);
       dispatch(loginbyOtp(userEmail, userEmail, otp));
     } catch (err) {
-      toast.error("Failed to Verify OTP", {...messageNotifications});
+      toast.error('Failed to Verify OTP', { ...messageNotifications });
       setIsLoading(false);
     }
   };
 
   return (
     <div className="h-screen w-full flex items-center justify-content-center">
-      <div className="col" style={{ maxWidth: "536px" }}>
+      <div className="col" style={{ maxWidth: '536px' }}>
         <div className="flex items-center justify-center mb-5">
           <Link to="/">
             <img src="/icon/logo.svg" alt="" className="h-20 w-20" />
@@ -78,7 +78,7 @@ function OneTimePassword() {
             <div className="flex mt-4 md:mt-5">
               <button
                 type="button"
-                onClick={() => navigate("/client/sign-in")}
+                onClick={() => navigate('/client/sign-in')}
                 className="bg-blue-900/[.3] w-full mb-2 rounded-md h-12 text-blue-500 hover:bg-blue-900/[.1] ease-in duration-200"
               >
                 {Data.pages.otp.cancelButton}
@@ -87,7 +87,7 @@ function OneTimePassword() {
                 type="submit"
                 className="bg-blue-500 hover:bg-blue-700 w-full h-12 rounded-md text-white font-light ml-2 ease-in duration-200"
               >
-                {isLoading ? "Verifying..." : Data.pages.otp.submitButton}
+                {isLoading ? 'Verifying...' : Data.pages.otp.submitButton}
               </button>
             </div>
           </form>
