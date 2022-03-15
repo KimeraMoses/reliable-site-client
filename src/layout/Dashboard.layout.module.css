@@ -1,0 +1,12 @@
+.notifications__bar{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 20px;
+    color: #ffffff;
+    background-color: #5bc787;
+}
+.notifications__bar a:hover{
+    color: #f1c40f;
+    font-weight: 600;
+}

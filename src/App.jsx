@@ -14,7 +14,6 @@ import './App.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   AutoAuthenticate,
-  // checkMultiFactorAuth,
   maintenanceStatus,
 } from 'store/Actions/AuthActions';
 

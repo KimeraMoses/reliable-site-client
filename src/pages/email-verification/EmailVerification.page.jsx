@@ -18,7 +18,7 @@ function EmailVerification() {
   }
   const query = useQuery();
   const code = query.get('code');
-  const brandId = query.get('brandId');
+  
 
   const emailVerificationHandler = async () => {
     setIsLoading(true);

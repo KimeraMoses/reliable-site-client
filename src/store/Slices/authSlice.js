@@ -94,8 +94,8 @@ export const authSlice = createSlice({
       state.user = {};
       state.token = null;
       state.isLoggedIn = false;
-      localStorage.removeItem('AuthToken');
-      localStorage.removeItem('CurrentUser');
+      localStorage.removeItem('AuthToken__client');
+      localStorage.removeItem('CurrentUser__client');
     },
   },
 });

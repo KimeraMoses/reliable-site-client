@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -78,51 +78,32 @@ const fields = [
       { name: 'country', label: 'Country', placeholder: 'USA' },
       { name: 'zipCode', label: 'ZIP Code', placeholder: '11216' },
     ],
-  },
-  { name: 'ipAddress', label: 'IP Address', placeholder: '253.205.121.39' },
+  }
 ];
 
 function SignUp() {
   const isLoading = useSelector((state) => state.reg.isLoading);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [values, setValues] = useState({
-    companyName: '',
-    fullName: '',
-    lastName: '',
-    emailAddress: '',
-    password: '',
-    confirmPassword: '',
-    address1: '',
-    address2: '',
-    city: '',
-    stateProv: '',
-    zipCode: '',
-    ipAddress: '',
-  });
-
-  const registerErrorsOb = {
-    companyName: '',
-    fullName: '',
-    lastName: '',
-    emailAddress: '',
-    password: '',
-    confirmPassword: '',
-    address1: '',
-    address2: '',
-    city: '',
-    stateProv: '',
-    country: '',
-    zipCode: '',
-    ipAddress: '',
+  const [ipAddress, setIpAddress] = useState("")
+  //creating function to load ip address from the API
+  const getData = async () => {
+    try {
+      const res = await fetch(`https://api.ipify.org?format=json`, {
+        method: "GET",
+      });
+      const data = await res.json();
+      setIpAddress(data.ip);
+      console.log("ip", data);
+    } catch (error) {
+      console.log("Recap Error", error);
+    }
   };
-  const [errors, setErrors] = useState(registerErrorsOb);
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setValues({ ...values, [name]: value });
-    setErrors({ ...errors, [name]: '' });
-  };
+  useEffect(() => {
+    //passing getData method to the lifecycle method
+    getData();
+  }, []);
 
   function useQuery() {
     return new URLSearchParams(useLocation().search);
@@ -149,7 +130,6 @@ function SignUp() {
           validationSchema={validationSchema}
           onSubmit={async (values) => {
             try {
-              setErrors('');
               await dispatch(
                 signup(
                   values.fullName,
@@ -165,7 +145,7 @@ function SignUp() {
                   values.zipCode,
                   values.country,
                   brandId,
-                  values.ipAddress,
+                  ipAddress,
                   '0'
                 )
               );
@@ -205,8 +185,6 @@ function SignUp() {
                                     halfField?.name === 'password' ||
                                     halfField?.name === 'confirmPassword'
                                       ? 'password'
-                                      : halfField?.name === 'zipCode'
-                                      ? 'number'
                                       : 'text'
                                   }
                                   className="w-full h-12 bg-custom-main rounded-md placeholder:text-gray-400 text-gray-400  placeholder:text-sm px-3  placeholder:font-light focus:outline-none"
@@ -237,8 +215,6 @@ function SignUp() {
                               field?.name === 'password' ||
                               field?.name === 'confirmPassword'
                                 ? 'password'
-                                : field?.name === 'zipCode'
-                                ? 'number'
                                 : 'text'
                             }
                             className="w-full h-12 bg-custom-main rounded-md placeholder:text-gray-400 text-gray-400  placeholder:text-sm px-3  placeholder:font-light focus:outline-none"

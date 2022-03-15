@@ -33,7 +33,7 @@ import {
 } from 'store/Slices/userRegistrationSlice';
 
 export const SaveTokenInLocalStorage = (dispatch, userDetails) => {
-  localStorage.setItem('CurrentUser', JSON.stringify(userDetails));
+  localStorage.setItem('CurrentUser__client', JSON.stringify(userDetails));
 };
 
 export const getUserProfile = (token) => {
@@ -46,7 +46,7 @@ export const getUserProfile = (token) => {
         headers: new Headers({
           'Content-type': 'application/json',
           'gen-api-key': process.env.REACT_APP_GEN_APIKEY,
-          tenant: 'admin',
+          tenant: 'client',
           Authorization: `Bearer ${token}`,
         }),
       }
@@ -61,11 +61,43 @@ export const getUserProfile = (token) => {
         user: res.data,
       })
     );
+    dispatch(getUserRoles(res.data.id))
 
     SaveTokenInLocalStorage(dispatch, res.data);
   };
 };
 
+export const getUserRoles = (id) => {
+  return async (dispatch) => {
+    // dispatch(initAuthenticationPending());
+    const response = await fetch(
+      `${process.env.REACT_APP_BASEURL}/api/users/${id}/roles`,
+      {
+        method: 'GET',
+        // body: JSON.stringify({
+        //   userName,
+        //   email,
+        //   password,
+        // }),
+        headers: new Headers({
+          // 'Content-type': 'application/json',
+          'gen-api-key': process.env.REACT_APP_GEN_APIKEY,
+          tenant: 'client',
+        }),
+      }
+    );
+    if (!response.ok) {
+      const error = await response.json();
+      console.log(error)
+      // dispatch(initAuthenticationFail(error));
+    }
+    const res = await response.json();
+    console.log(res)
+    // dispatch(initAuthenticationSuccess(res.data));
+    // dispatch(getUserProfile(res.data.token));
+    // localStorage.setItem('AuthToken', JSON.stringify(res.data));
+  };
+};
 export const login = (email, userName, password) => {
   return async (dispatch) => {
     dispatch(initAuthenticationPending());
@@ -80,8 +112,8 @@ export const login = (email, userName, password) => {
         }),
         headers: new Headers({
           'Content-type': 'application/json',
-          'admin-api-key': process.env.REACT_APP_ADMIN_APIKEY,
-          tenant: 'admin',
+          'gen-api-key': process.env.REACT_APP_GEN_APIKEY,
+          tenant: 'client',
         }),
       }
     );
@@ -92,7 +124,7 @@ export const login = (email, userName, password) => {
     const res = await response.json();
     dispatch(initAuthenticationSuccess(res.data));
     dispatch(getUserProfile(res.data.token));
-    localStorage.setItem('AuthToken', JSON.stringify(res.data));
+    localStorage.setItem('AuthToken__client', JSON.stringify(res.data));
   };
 };
 
@@ -111,7 +143,7 @@ export const loginbyOtp = (email, userName, otpCode) => {
         headers: new Headers({
           'Content-type': 'application/json',
           'gen-api-key': process.env.REACT_APP_GEN_APIKEY,
-          tenant: 'admin',
+          tenant: 'client',
         }),
       }
     );
@@ -122,7 +154,7 @@ export const loginbyOtp = (email, userName, otpCode) => {
     const res = await response.json();
     dispatch(initAuthenticationSuccess(res.data));
     dispatch(getUserProfile(res.data.token));
-    localStorage.setItem('AuthToken', JSON.stringify(res.data));
+    localStorage.setItem('AuthToken__client', JSON.stringify(res.data));
   };
 };
 
@@ -168,8 +200,8 @@ export const signup = (
         }),
         headers: new Headers({
           'Content-type': 'application/json',
-          'admin-api-key': process.env.REACT_APP_ADMIN_APIKEY,
-          tenant: 'admin',
+          'gen-api-key': process.env.REACT_APP_GEN_APIKEY,
+          tenant: 'client',
         }),
       }
     );
@@ -203,22 +235,26 @@ export const forgotPassword = (email) => {
         headers: new Headers({
           'Content-type': 'application/json',
           'gen-api-key': process.env.REACT_APP_GEN_APIKEY,
-          tenant: 'admin',
+          tenant: 'client',
         }),
       }
     );
     if (!response.ok) {
       const error = await response.json();
       dispatch(forgotPasswordFail(error));
+      console.log(error)
     }
     const data = await response.json();
     dispatch(forgotPasswordSuccess(data));
+    console.log(data)
   };
 };
 
 export const passwordReset = (email, password, confirmPassword, token) => {
+
   return async (dispatch) => {
     dispatch(resetPasswordPending());
+    console.log(email, password, confirmPassword, token)
     const response = await fetch(
       `${process.env.REACT_APP_BASEURL}/api/identity/reset-password`,
       {
@@ -231,7 +267,7 @@ export const passwordReset = (email, password, confirmPassword, token) => {
         }),
         headers: new Headers({
           'Content-type': 'application/json',
-          tenant: 'admin',
+          tenant: 'client',
           'gen-api-key': process.env.REACT_APP_GEN_APIKEY,
         }),
       }
@@ -251,7 +287,7 @@ export const validateEmailToken = (userId, code) => {
     const response = await fetch(
       `${
         process.env.REACT_APP_BASEURL
-      }/api/identity/confirm-email?userId=${userId}&code=${code.trim()}&tenant=admin`,
+      }/api/identity/confirm-email?userId=${userId}&code=${code.trim()}&tenant=client`,
       {
         method: 'GET',
         headers: new Headers({
@@ -269,9 +305,9 @@ export const validateEmailToken = (userId, code) => {
 };
 
 export const AutoAuthenticate = (dispatch) => {
-  const AuthToken = localStorage.getItem('AuthToken');
-  const CurrentUser = localStorage.getItem('CurrentUser');
-  const suspended = localStorage.getItem('Account-Suspended');
+  const AuthToken = localStorage.getItem('AuthToken__client');
+  const CurrentUser = localStorage.getItem('CurrentUser__client');
+  const suspended = localStorage.getItem('Client__Account-Suspended');
 
   if (suspended) {
     dispatch(accountSuspended());
@@ -303,7 +339,7 @@ export const maintenanceStatus = (token) => {
         method: 'GET',
         headers: new Headers({
           'admin-api-key': process.env.REACT_APP_ADMIN_APIKEY,
-          tenant: 'admin',
+          tenant: 'client',
         }),
       }
     );
@@ -330,8 +366,8 @@ export const confirmOtp = (userId, otp) => {
         }),
         headers: new Headers({
           'Content-type': 'application/json',
-          'admin-api-key': process.env.REACT_APP_ADMIN_APIKEY,
-          tenant: 'admin',
+          'gen-api-key': process.env.REACT_APP_GEN_APIKEY,
+          tenant: 'client',
         }),
       }
     );

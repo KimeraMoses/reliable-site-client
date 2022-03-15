@@ -37,20 +37,10 @@ const fields = [
 
 function SignIn() {
   const [isLoading, setIsLoading] = useState(false);
-
-  const [error, setError] = useState('');
-  const [values, setValues] = useState({
-    email: '',
-    password: '',
-    username: '',
-  });
+  const [error, setError] = useState("")
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setValues({ ...values, [name]: value });
-    setError('');
-  };
+
   let has2faEnabled = false;
   const login = (email, userName, password) => {
     return async (dispatch) => {
@@ -66,8 +56,8 @@ function SignIn() {
           }),
           headers: new Headers({
             'Content-type': 'application/json',
-            'admin-api-key': process.env.REACT_APP_ADMIN_APIKEY,
-            tenant: 'admin',
+            'gen-api-key': process.env.REACT_APP_GEN_APIKEY,
+            tenant: 'client',
           }),
         }
       );
@@ -76,10 +66,9 @@ function SignIn() {
         if (error.exception === 'User Not Found.') {
           setError('User Not found, Please check your credentials');
         }
-        // console.log("Login error", error);
         if (error.exception.includes('User Not Active')) {
           has2faEnabled = true;
-          localStorage.setItem('Account-Suspended', true);
+          localStorage.setItem('Client__Account-Suspended', true);
           dispatch(accountSuspended());
           navigate('/client/account-suspended');
 
@@ -93,31 +82,26 @@ function SignIn() {
         dispatch(initAuthenticationFail(error));
       }
       const res = await response.json();
-      // console.log("login data", res);
       if (res.messages[0]) {
         has2faEnabled = true;
         navigate('/client/one-time-password');
-        localStorage.setItem('userId', res.messages[1]);
-        localStorage.setItem('userEmail', res.messages[2]);
+        localStorage.setItem('userId__client', res.messages[1]);
+        localStorage.setItem('userEmail__client', res.messages[2]);
         toast.success('Please verify otp to login', {
           ...messageNotifications,
         });
       }
-      localStorage.removeItem('Account-Suspended');
+      localStorage.removeItem('Client__Account-Suspended');
       dispatch(initAuthenticationSuccess(res.data));
       dispatch(getUserProfile(res.data.token));
-      localStorage.setItem('AuthToken', JSON.stringify(res.data));
+      localStorage.setItem('AuthToken__client', JSON.stringify(res.data));
     };
-  };
-
-  const LoginHandler = async (e) => {
-    e.preventDefault();
   };
 
   return (
     <div className="sign-in-page-wrapper">
-      <div className="h-screen flex items-center ">
-        <div className="w-screen flex items-center justify-center">
+      <div className="h-screen flex">
+        <div className="w-screen flex justify-center pt-5">
           <div className="col" style={{ maxWidth: '536px' }}>
             <div className="flex items-center justify-center mb-5">
               <img src="/icon/logo.svg" alt="" className="h-20 w-20" />
@@ -149,7 +133,6 @@ function SignIn() {
                     await dispatch(
                       login(values.email, values.email, values.password)
                     );
-                    setValues({ password: '', username: '' });
                     toast.success('You have logged in successfuly', {
                       ...messageNotifications,
                     });
@@ -168,7 +151,6 @@ function SignIn() {
                   return (
                     <Form>
                       {fields?.map((field) => {
-                        const { name, label, placeholder } = field;
                         return (
                           <div className="mt-4 mb-3">
                             <label
