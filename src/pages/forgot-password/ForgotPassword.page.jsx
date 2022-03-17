@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -7,6 +7,7 @@ import * as Yup from 'yup';
 import { messageNotifications } from 'store';
 import { forgotPassword } from 'store/Actions/AuthActions';
 import Data from '../../db.json';
+import Recaptcha from 'pages/Google-Recaptcha/Recaptcha';
 
 const initialValues = {
   email: '',
@@ -22,6 +23,7 @@ function ForgotPassword() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const refRecaptcha = useRef(null);
   return (
     <div className="h-screen w-full flex items-center justify-content-center">
       <div className="col" style={{ maxWidth: '536px' }}>
@@ -40,7 +42,7 @@ function ForgotPassword() {
           <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
-            onSubmit={async (values) => {
+            onSubmit={async (values, { resetForm }) => {
               setIsLoading(true);
               try {
                 await dispatch(forgotPassword(values.email));
@@ -51,6 +53,7 @@ function ForgotPassword() {
                     ...messageNotifications,
                   }
                 );
+                resetForm()
                 setIsLoading(false);
               } catch (err) {
                 toast.error('Failed to reset Password', {
@@ -89,6 +92,7 @@ function ForgotPassword() {
                     >
                       {Data.pages.forgotPassword.cancelBtn}
                     </button>
+                    <Recaptcha refRecaptcha={refRecaptcha}/>
                     <button
                       type="submit"
                       className="bg-blue-500 hover:bg-blue-700 w-full h-12 rounded-md text-white font-light ml-2 ease-in duration-200"

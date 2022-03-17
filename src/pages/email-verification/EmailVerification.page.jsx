@@ -23,7 +23,7 @@ function EmailVerification() {
   const emailVerificationHandler = async () => {
     setIsLoading(true);
     try {
-      await dispatch(validateEmailToken(userId, code));
+      await dispatch(validateEmailToken(userId, code))
       setIsLoading(false);
       toast.success('Email verified Successfully', {
         ...messageNotifications,

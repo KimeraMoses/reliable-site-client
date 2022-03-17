@@ -5,10 +5,16 @@ import { useMediaQuery } from "react-responsive";
 import { SideBar, TopBar } from "./components";
 import classes from "./Dashboard.layout.module.css";
 import Data from "../db.json";
+import { useSelector } from "react-redux";
 
 export function DashboardLayout({ children, hide }) {
   const [active, setActive] = useState("");
+  const user = useSelector((state) => state.auth.user);
 
+  const Roles = user && user.userRolesResponse;
+  const isAdmin =
+    Roles.userRoles && Roles.userRoles[0] && Roles.userRoles[0].enabled;
+  console.log(Roles, isAdmin);
   const { pathname } = useLocation();
 
   const lessThanDesktop = useMediaQuery({
@@ -29,10 +35,14 @@ export function DashboardLayout({ children, hide }) {
 
   return (
     <div className="w-full md:min-h-screen">
-      <div className={classes.notifications__bar}>
-        <div>Logged In as AAA</div>
-        <div><Link to={'/admin/sign-in'}>Switch to Admin</Link></div>
-      </div>
+      {isAdmin && (
+        <div className={classes.notifications__bar}>
+          <div>Logged In as AAA</div>
+          <div>
+            <Link to={"/admin/sign-in"}>Switch to Admin</Link>
+          </div>
+        </div>
+      )}
       <TopBar hide={hide} hideSide={hideSide} toggleSide={toggleSide} />
       <div className="flex">
         {!hide && (

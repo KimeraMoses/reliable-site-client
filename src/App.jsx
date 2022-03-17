@@ -1,47 +1,53 @@
-import React, { Suspense, useEffect } from 'react';
-import { ToastContainer } from 'react-toastify';
+import React, { Suspense, useEffect } from "react";
+import { ToastContainer } from "react-toastify";
 import {
   BrowserRouter as Router,
   Navigate,
   Route,
   Routes,
-} from 'react-router-dom';
-import pages, { Error404, dashboardPages } from 'pages';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'react-toastify/dist/ReactToastify.css';
+} from "react-router-dom";
+import pages, { Error404, dashboardPages } from "pages";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "react-toastify/dist/ReactToastify.css";
 
-import './App.scss';
-import { useDispatch, useSelector } from 'react-redux';
+import "./App.scss";
+import { useDispatch, useSelector } from "react-redux";
 import {
   AutoAuthenticate,
+  getUserRoles,
   maintenanceStatus,
-} from 'store/Actions/AuthActions';
+} from "store/Actions/AuthActions";
 
-const SignIn = React.lazy(() => import('pages/sign-in/SignIn.page'));
-const SignUp = React.lazy(() => import('pages/sign-up/SignUp.page'));
+const SignIn = React.lazy(() => import("pages/sign-in/SignIn.page"));
+const SignUp = React.lazy(() => import("pages/sign-up/SignUp.page"));
 const ResetPassword = React.lazy(() =>
-  import('pages/reset-password/ResetPassword.page')
+  import("pages/reset-password/ResetPassword.page")
 );
 const ForgotPassword = React.lazy(() =>
-  import('pages/forgot-password/ForgotPassword.page')
+  import("pages/forgot-password/ForgotPassword.page")
 );
 const EmailVerification = React.lazy(() =>
-  import('pages/email-verification/EmailVerification.page')
+  import("pages/email-verification/EmailVerification.page")
 );
 const ConfirmOtp = React.lazy(() =>
-  import('pages/one-time-password/OneTimePassword.page')
+  import("pages/one-time-password/OneTimePassword.page")
 );
 const UnderMaintenance = React.lazy(() =>
-  import('pages/under-maintenance/UnderMaintenance.page')
+  import("pages/under-maintenance/UnderMaintenance.page")
 );
 const SuspendedAccount = React.lazy(() =>
-  import('pages/account-suspended/AccountSuspended.page')
+  import("pages/account-suspended/AccountSuspended.page")
 );
 
 function App() {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const { maintenance, suspended } = useSelector((state) => state.settings);
+
   const dispatch = useDispatch();
+  // useEffect(() => {
+  //   dispatch(getUserRoles(userId));
+  // }, [userId]);
+
   useEffect(() => {
     AutoAuthenticate(dispatch);
     dispatch(maintenanceStatus());

@@ -6,7 +6,7 @@ function LockScreen() {
       <div className="col-md-6 my-auto px-5  md:p-20">
         <div style={{ maxWidth: '668px' }} className="mx-auto">
           <div className="">
-            <img src="icon/logo.svg" alt="" className="w-20 h-20" />
+            <img src="/icon/logo.svg" alt="" className="w-20 h-20" />
             <h3 className="text-4xl text-white font-normal mt-5">
               Lock Screen
             </h3>
