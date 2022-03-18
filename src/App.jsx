@@ -1,5 +1,6 @@
-import React, { Suspense, useEffect } from "react";
+import React, { Suspense, useEffect, useRef } from "react";
 import { ToastContainer } from "react-toastify";
+import IdleTimer from "react-idle-timer";
 import {
   BrowserRouter as Router,
   Navigate,
@@ -14,9 +15,9 @@ import "./App.scss";
 import { useDispatch, useSelector } from "react-redux";
 import {
   AutoAuthenticate,
-  getUserRoles,
   maintenanceStatus,
 } from "store/Actions/AuthActions";
+import { initiateLockScreen } from "store/Slices/settingSlice";
 
 const SignIn = React.lazy(() => import("pages/sign-in/SignIn.page"));
 const SignUp = React.lazy(() => import("pages/sign-up/SignUp.page"));
@@ -38,15 +39,21 @@ const UnderMaintenance = React.lazy(() =>
 const SuspendedAccount = React.lazy(() =>
   import("pages/account-suspended/AccountSuspended.page")
 );
+const LockScreen = React.lazy(() =>
+  import("pages/lock-screen/LockScreen.page")
+);
 
 function App() {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const { maintenance, suspended } = useSelector((state) => state.settings);
+  const isIdle = useSelector((state) => state.settings.isIdle);
+  const TimeOut = 1000* 900
+  const idleTimer = useRef(null);
 
+  const OnIdle = () => {
+    dispatch(initiateLockScreen());
+  };
   const dispatch = useDispatch();
-  // useEffect(() => {
-  //   dispatch(getUserRoles(userId));
-  // }, [userId]);
 
   useEffect(() => {
     AutoAuthenticate(dispatch);
@@ -55,11 +62,16 @@ function App() {
 
   return (
     <div className="App bg-custom-main flex items-center content-center">
+      <IdleTimer ref={idleTimer} onIdle={OnIdle} timeout={TimeOut} />
       <ToastContainer />
       <Suspense fallback={<>Loading...</>}>
         <Router>
           <Routes>
             <Route path="/" element={<Navigate to="/client/sign-in" />} />
+            <Route
+              path="/client/lock-screen"
+              element={isIdle ? <LockScreen /> : <Navigate to={-1} />}
+            />
             <Route
               path="/client/account-suspended"
               element={
@@ -121,13 +133,7 @@ function App() {
             <Route
               path="/client/under-maintenance"
               element={
-                maintenance ? (
-                  <UnderMaintenance />
-                ) : isLoggedIn ? (
-                  <Navigate to="/client/dashboard" />
-                ) : (
-                  <Navigate to="/client/sign-in" />
-                )
+                maintenance ? <UnderMaintenance /> : <Navigate to={-1} />
               }
             />
             <Route
@@ -145,14 +151,26 @@ function App() {
             <Route
               path="/client/sign-up"
               element={
-                isLoggedIn ? <Navigate to="/client/dashboard" /> : <SignUp />
+                maintenance ? (
+                  <Navigate to="/client/under-maintenance" />
+                ) : isLoggedIn ? (
+                  <Navigate to="/client/dashboard" />
+                ) : (
+                  <SignUp />
+                )
               }
             />
             {pages.map(({ path, Component }) => (
               <Route
                 key={path}
                 path={`/client${path}`}
-                element={<Component />}
+                element={
+                  maintenance ? (
+                    <Navigate to="/client/under-maintenance" />
+                  ) : (
+                    <Component />
+                  )
+                }
                 exact
               />
             ))}
@@ -162,7 +180,9 @@ function App() {
                   key={path}
                   path={`/client${path}`}
                   element={
-                    suspended ? (
+                    isIdle ? (
+                      <Navigate to="/client/lock-screen" />
+                    ) : suspended ? (
                       <Navigate to="/client/account-suspended" />
                     ) : maintenance ? (
                       <Navigate to="/client/under-maintenance" />

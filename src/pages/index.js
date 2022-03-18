@@ -6,11 +6,7 @@ const pages = [
     Component: lazy(() =>
       import('./unauthorized-access/UnauthorizedAccess.page')
     ),
-  },
-  {
-    path: '/lock-screen',
-    Component: lazy(() => import('./lock-screen/LockScreen.page')),
-  },
+  }
 ];
 
 export const dashboardPages = [

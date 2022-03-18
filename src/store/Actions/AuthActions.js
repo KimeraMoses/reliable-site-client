@@ -25,6 +25,9 @@ import {
   checkMaintenanceFail,
   checkMaintenancePending,
   checkMaintenanceSuccess,
+  fetchSettingsFail,
+  fetchSettingsPending,
+  fetchSettingsSuccess,
 } from "store/Slices/settingSlice";
 import {
   UserRegistrationFail,
@@ -49,93 +52,24 @@ export const getUserProfile = (token) => {
     );
     if (!response.ok) {
       const error = await response.json();
-      console.log("profile", error);
       dispatch(authenticationFail(error));
     }
     const res = await response.json();
-    console.log("Profile", res);
     dispatch(
       authenticationSuccess({
         user: res.data,
       })
     );
     localStorage.setItem("CurrentUser__client", JSON.stringify(res.data));
-    // SaveTokenInLocalStorage(dispatch, res.data);
   };
 };
 
-// export const getUserRoles = (id) => {
-//   return async (dispatch) => {
-//     // dispatch(initAuthenticationPending());
-//     console.log(id)
-//     const response = await fetch(
-//       `${process.env.REACT_APP_BASEURL}/api/users/${id}/roles`,
-//       {
-//         method: 'GET',
-//         // body: JSON.stringify({
-//         //   userName,
-//         //   email,
-//         //   password,
-//         // }),
-//         headers: new Headers({
-//           // 'Content-type': 'application/json',
-//           'gen-api-key': process.env.REACT_APP_GEN_APIKEY,
-//           "tenant": 'admin',
-//         }),
-//       }
-//     );
-//     if (!response.ok) {
-//       const error = await response.json();
-//       console.log("Roles",error)
-//       // dispatch(initAuthenticationFail(error));
-//     }
-//     const res = await response.json();
-//     console.log("Role",res)
-//     // dispatch(initAuthenticationSuccess(res.data));
-//     // dispatch(getUserProfile(res.data.token));
-//     // localStorage.setItem('AuthToken', JSON.stringify(res.data));
-//   };
-// };
-// export const login = (email, userName, password) => {
-//   return async (dispatch) => {
-//     dispatch(initAuthenticationPending());
-//     console.log(email, userName, password)
-//     const response = await fetch(
-//       `${process.env.REACT_APP_BASEURL}/api/tokens`,
-//       {
-//         method: 'POST',
-//         body: JSON.stringify({
-//           userName,
-//           email,
-//           password,
-//         }),
-//         headers: new Headers({
-//           'Content-type': 'application/json',
-//           'gen-api-key': process.env.REACT_APP_GEN_APIKEY,
-//           "tenant": 'admin',
-//         }),
-//       }
-//     );
-//     if (!response.ok) {
-//       const error = await response.json();
-//       dispatch(initAuthenticationFail(error));
-//       console.log("Login", error)
-//     }
-//     const res = await response.json();
-//     console.log("Login", res)
-//     dispatch(initAuthenticationSuccess(res.data));
-//     dispatch(getUserProfile(res.data.token));
-//     localStorage.setItem('AuthToken__client', JSON.stringify(res.data));
-//   };
-// };
-
-export const SaveTokenInLocalStorage = (dispatch, TokenDetails) => {
+export const SaveTokenInLocalStorage = (TokenDetails) => {
   // logOutTimer(dispatch, TokenDetails.refreshTokenExpiryTime);
-  console.log(TokenDetails)
   localStorage.setItem("AuthToken__client", JSON.stringify(TokenDetails));
 };
 
-export const loginbyOtp = (email, userName, otpCode) => {
+export const loginbyOtp = (email, otpCode) => {
   return async (dispatch) => {
     dispatch(initAuthenticationPending());
     const response = await fetch(
@@ -143,7 +77,6 @@ export const loginbyOtp = (email, userName, otpCode) => {
       {
         method: "POST",
         body: JSON.stringify({
-          userName,
           email,
           otpCode,
         }),
@@ -156,15 +89,12 @@ export const loginbyOtp = (email, userName, otpCode) => {
     );
     if (!response.ok) {
       const error = await response.json();
-      console.log("login otp", error);
       dispatch(initAuthenticationFail(error));
     }
     const res = await response.json();
-    console.log("login otp res", res);
     dispatch(initAuthenticationSuccess(res.data));
     dispatch(getUserProfile(res.data.token));
     SaveTokenInLocalStorage(res.data);
-    // localStorage.setItem('AuthToken__client', JSON.stringify(res.data));
   };
 };
 
@@ -226,11 +156,9 @@ export const signup = (
           "Failed to create account, Please check your connection and try again";
       }
       dispatch(UserRegistrationFail(message));
-      console.log("user reg err", error);
     }
     const data = await response.json();
     dispatch(UserRegistrationSuccess(data));
-    console.log("user reg data", data);
   };
 };
 
@@ -254,18 +182,15 @@ export const forgotPassword = (email) => {
     if (!response.ok) {
       const error = await response.json();
       dispatch(forgotPasswordFail(error));
-      console.log("Pass err", error);
     }
     const data = await response.json();
     dispatch(forgotPasswordSuccess(data));
-    console.log("Pass", data);
   };
 };
 
 export const passwordReset = (email, password, confirmPassword, token) => {
   return async (dispatch) => {
     dispatch(resetPasswordPending());
-    console.log(email, password, confirmPassword, token);
     const response = await fetch(
       `${process.env.REACT_APP_BASEURL}/api/identity/reset-password`,
       {
@@ -286,11 +211,9 @@ export const passwordReset = (email, password, confirmPassword, token) => {
     if (!response.ok) {
       const error = await response.json();
       dispatch(resetPasswordFail(error));
-      console.log("reset Err", error);
     }
     const data = await response.json();
     dispatch(resetPasswordSuccess(data));
-    console.log("reset data", data);
   };
 };
 
@@ -312,11 +235,9 @@ export const validateEmailToken = (userId, code) => {
     if (!response.ok) {
       const error = await response.json();
       dispatch(verificationFail(error));
-      console.log("email err", error);
     }
     const data = await response.json();
     dispatch(verificationSuccess(data));
-    console.log("email data", data);
   };
 };
 
@@ -335,15 +256,34 @@ export const maintenanceStatus = () => {
     );
     if (!response.ok) {
       const error = await response.json();
-      // const error = await response;
       dispatch(checkMaintenanceFail(error));
-      console.log("mainte err", error);
     }
 
     const res = await response.json();
-    // const res = await response
     dispatch(checkMaintenanceSuccess(res));
-    console.log("mainte res", res);
+  };
+};
+
+export const trustedDays = () => {
+  return async (dispatch) => {
+    dispatch(fetchSettingsPending());
+    const response = await fetch(
+      `https://myreliablesite.m2mbeta.com/admin/api/v1/admin/settings/getsettingswithtenant/admin`,
+      {
+        method: "GET",
+        headers: new Headers({
+          "admin-api-key": process.env.REACT_APP_ADMIN_APIKEY,
+          tenant: "admin",
+        }),
+      }
+    );
+    if (!response.ok) {
+      const error = await response.json();
+      dispatch(fetchSettingsFail(error));
+    }
+
+    const res = await response.json();
+    dispatch(fetchSettingsSuccess(res.data));
   };
 };
 
@@ -368,45 +308,68 @@ export const confirmOtp = (userId, otp) => {
     if (!response.ok) {
       const error = await response.json();
       dispatch(confirmOtpFail(error));
-      console.log("Otp error", error);
     }
 
     const res = await response.json();
     dispatch(confirmOtpSuccess(res));
-    console.log("otp data", res);
     const userEmail = localStorage.getItem("userEmail__client");
     dispatch(loginbyOtp(userEmail, userEmail, otp));
   };
 };
 
-
-export const VerifyRecaptha = (reCaptchaToken) => {
+export const disableConfirmOtp = (userId, otp, isRemember, days) => {
   return async (dispatch) => {
-    console.log(reCaptchaToken)
-    try {
-      const res = await fetch(
-        `${process.env.REACT_APP_BASEURL}/api/identity/verifyrecaptcha`,
-        {
-          method: "POST",
-          body: JSON.stringify({
-            reCaptchaToken,
-          }),
-          headers: new Headers({
-            "Content-type": "application/json",
-          }),
-        }
-      );
-      const data = await res.json();
-      console.log(data)
-      // setIsHuman(data.success);
-    } catch (error) {
-      console.log(error)
-      // setError(
-      //   "Recaptcha verification failed, Please reload page and try again"
-      // );
+    dispatch(confirmOtpPending());
+    const response = await fetch(
+      `${process.env.REACT_APP_BASEURL}/api/mfauthenticator/removetwofactorauthentication`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          userId,
+          otp,
+          isRemember,
+        }),
+        headers: new Headers({
+          "Content-type": "application/json",
+          "gen-api-key": process.env.REACT_APP_GEN_APIKEY,
+          tenant: "admin",
+        }),
+      }
+    );
+    if (!response.ok) {
+      const error = await response.json();
+      dispatch(confirmOtpFail(error));
     }
+
+    const res = await response.json();
+    dispatch(confirmOtpSuccess(res));
+    const userEmail = localStorage.getItem("userEmail__client");
+    dispatch(loginbyOtp(userEmail, userEmail, otp));
   };
 };
+
+// export const VerifyRecaptha = (reCaptchaToken) => {
+//   return async (dispatch) => {
+//     try {
+//       const res = await fetch(
+//         `${process.env.REACT_APP_BASEURL}/api/identity/verifyrecaptcha`,
+//         {
+//           method: "POST",
+//           body: JSON.stringify({
+//             reCaptchaToken,
+//           }),
+//           headers: new Headers({
+//             "Content-type": "application/json",
+//           }),
+//         }
+//       );
+//       // const data = await res.json();
+//       // console.log(data);
+//     } catch (error) {
+//       // console.log(error);
+//     }
+//   };
+// };
 
 export const logOutTimer = (dispatch, timer) => {
   setTimeout(() => {
@@ -439,6 +402,6 @@ export const AutoAuthenticate = (dispatch) => {
   };
   dispatch(autoAuthenticationSuccess(data));
 
-  const timer = expireDate.getTime() - todaysDate.getTime();
-  logOutTimer(dispatch, timer);
+  // const timer = expireDate.getTime() - todaysDate.getTime();
+  // logOutTimer(dispatch, timer);
 };

@@ -6,7 +6,6 @@ import { toast } from "react-toastify";
 import {
   getUserProfile,
   SaveTokenInLocalStorage,
-  VerifyRecaptha,
 } from "store/Actions/AuthActions";
 import { Form, Formik, Field } from "formik";
 import * as Yup from "yup";
@@ -20,6 +19,7 @@ import {
 import { accountSuspended } from "store/Slices/settingSlice";
 import Data from "../../db.json";
 import Recaptcha from "pages/Google-Recaptcha/Recaptcha";
+import { useCookies } from "react-cookie";
 
 const initialValues = {
   email: "",
@@ -43,12 +43,13 @@ const fields = [
 function SignIn() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [isHuman, setIsHuman] = useState(false);
+  const [cookies] = useCookies();
+  const isTrustDevice = cookies.client_days? true: false
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const refRecaptcha = useRef(null);
   let has2faEnabled = false;
-  const login = (email, userName, password) => {
+  const login = (email, password,TrustDevice) => {
     return async (dispatch) => {
       dispatch(initAuthenticationPending());
       const response = await fetch(
@@ -56,9 +57,9 @@ function SignIn() {
         {
           method: "POST",
           body: JSON.stringify({
-            userName,
             email,
             password,
+            TrustDevice,
           }),
           headers: new Headers({
             "Content-type": "application/json",
@@ -70,7 +71,6 @@ function SignIn() {
       if (!response.ok) {
         const error = await response.json();
         dispatch(initAuthenticationFail(error));
-        console.log("Login", error);
         if (error.exception === "User Not Found.") {
           setError("User Not found, Please check your credentials");
         }
@@ -98,7 +98,6 @@ function SignIn() {
         }
       }
       const res = await response.json();
-      console.log("Login", res);
       if (res.messages[0]) {
         has2faEnabled = true;
         navigate("/client/one-time-password");
@@ -112,17 +111,9 @@ function SignIn() {
       dispatch(initAuthenticationSuccess(res.data));
       dispatch(getUserProfile(res.data.token));
       SaveTokenInLocalStorage(res.data);
-      // localStorage.setItem("AuthToken__client", JSON.stringify(res.data));
     };
   };
 
-  // const RecaptchaHandler = async (value) => {
-  //   if (value !== null) {
-  //     await dispatch(VerifyRecaptha(value, "12.33.444"));
-  //   }
-  //   // if value is null recaptcha expired
-  //   if (value === null) setIsHuman(false);
-  // };
 
   return (
     <div className="sign-in-page-wrapper">
@@ -144,7 +135,7 @@ function SignIn() {
                 <p className="custom-text-light">
                   New here?{" "}
                   <span className="text-blue-400">
-                    <Link to="/client/sign-up?brandId=2341">Click Here</Link>{" "}
+                    <Link to="/client/sign-up">Click Here</Link>{" "}
                   </span>
                   to create an account.
                 </p>
@@ -157,7 +148,7 @@ function SignIn() {
                   try {
                     setError("");
                     await dispatch(
-                      login(values.email, values.email, values.password)
+                      login(values.email, values.password, isTrustDevice)
                     );
                     resetForm();
                     toast.success("You have logged in successfuly", {
@@ -179,7 +170,7 @@ function SignIn() {
                     <Form>
                       {fields?.map((field) => {
                         return (
-                          <div className="mt-4 mb-3">
+                          <div className="mt-4 mb-3" key={field.name}>
                             <div className="flex justify-between">
                               <label
                                 htmlFor={field?.name}

@@ -7,7 +7,6 @@ import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import { signup } from "store/Actions/AuthActions";
 import Data from "../../db.json";
-import ReactGoogleInvisibleRecaptcha from "react-google-invisible-recaptcha";
 import Recaptcha from "pages/Google-Recaptcha/Recaptcha";
 
 const initialValues = {
@@ -95,9 +94,7 @@ function SignUp() {
       });
       const data = await res.json();
       setIpAddress(data.ip);
-      console.log("ip", data);
     } catch (error) {
-      console.log("Recap Error", error);
     }
   };
 
@@ -130,7 +127,6 @@ function SignUp() {
           initialValues={initialValues}
           validationSchema={validationSchema}
           onSubmit={async (values, { resetForm }) => {
-            console.log(values);
             setIsLoading(true);
             try {
               await dispatch(
@@ -174,12 +170,12 @@ function SignUp() {
               <Form>
                 {fields.map((field) => {
                   return (
-                    <div>
+                    <div key={field.name}>
                       {field?.twoFields ? (
                         <div className="flex justify-between mb-8">
                           {field?.twoFields?.map((halfField, idx) => {
                             return (
-                              <div className={idx === 0 ? "mr-2" : "ml-2"}>
+                              <div className={idx === 0 ? "mr-2" : "ml-2"} key={halfField.name}>
                                 <label
                                   htmlFor={halfField?.name}
                                   className="form-label text-white font-light text-sm"
