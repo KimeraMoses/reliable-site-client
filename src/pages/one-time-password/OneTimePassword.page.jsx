@@ -9,7 +9,6 @@ import { messageNotifications } from "store";
 import {
   confirmOtp,
   disableConfirmOtp,
-  loginbyOtp,
   trustedDays,
 } from "store/Actions/AuthActions";
 import Data from "../../db.json";
@@ -57,7 +56,6 @@ function OneTimePassword() {
             validationSchema={validationSchema}
             onSubmit={async (values, { resetForm }) => {
               const userId = localStorage.getItem("userId__client");
-              const userEmail = localStorage.getItem("userEmail__client");
               setIsLoading(true);
               try {
                 await dispatch(
@@ -65,8 +63,7 @@ function OneTimePassword() {
                     ? disableConfirmOtp(
                         userId,
                         values?.otp,
-                        ischecked,
-                        days && days.trustDeviceinDays
+                        ischecked
                       )
                     : confirmOtp(userId, values?.otp)
                 );
@@ -80,7 +77,6 @@ function OneTimePassword() {
                 });
                 setIsLoading(false);
                 resetForm();
-                dispatch(loginbyOtp(userEmail, values?.otp));
               } catch (err) {
                 toast.error("Failed to Verify OTP", {
                   ...messageNotifications,
