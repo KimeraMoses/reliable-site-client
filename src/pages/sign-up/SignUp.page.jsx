@@ -43,7 +43,7 @@ const validationSchema = Yup.object().shape({
   city: Yup.string().required("City is required!"),
   stateProv: Yup.string().required("State is required!"),
   country: Yup.string().required("Country is required!"),
-  zipCode: Yup.number().required("Zip code is required!"),
+  zipCode: Yup.string().required("Zip code is required!"),
 });
 
 const fields = [

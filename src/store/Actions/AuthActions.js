@@ -313,11 +313,11 @@ export const confirmOtp = (userId, otp) => {
     const res = await response.json();
     dispatch(confirmOtpSuccess(res));
     const userEmail = localStorage.getItem("userEmail__client");
-    dispatch(loginbyOtp(userEmail, otp));
+    dispatch(loginbyOtp(userEmail, userEmail, otp));
   };
 };
 
-export const disableConfirmOtp = (userId, otp, isRemember) => {
+export const disableConfirmOtp = (userId, otp, isRemember, days) => {
   return async (dispatch) => {
     dispatch(confirmOtpPending());
     const response = await fetch(
@@ -344,7 +344,7 @@ export const disableConfirmOtp = (userId, otp, isRemember) => {
     const res = await response.json();
     dispatch(confirmOtpSuccess(res));
     const userEmail = localStorage.getItem("userEmail__client");
-    dispatch(loginbyOtp(userEmail, otp));
+    dispatch(loginbyOtp(userEmail, userEmail, otp));
   };
 };
 
