@@ -21,7 +21,6 @@ import {
   verificationSuccess,
 } from "store/Slices/authSlice";
 import {
-  accountSuspended,
   checkMaintenanceFail,
   checkMaintenancePending,
   checkMaintenanceSuccess,
@@ -72,6 +71,7 @@ export const SaveTokenInLocalStorage = (TokenDetails) => {
 export const loginbyOtp = (email, otpCode) => {
   return async (dispatch) => {
     dispatch(initAuthenticationPending());
+    console.log(email, otpCode)
     const response = await fetch(
       `${process.env.REACT_APP_BASEURL}/api/tokens/gettokenbyotp`,
       {
@@ -90,11 +90,13 @@ export const loginbyOtp = (email, otpCode) => {
     if (!response.ok) {
       const error = await response.json();
       dispatch(initAuthenticationFail(error));
+      console.log("Otp err",error)
     }
     const res = await response.json();
     dispatch(initAuthenticationSuccess(res.data));
     dispatch(getUserProfile(res.data.token));
     SaveTokenInLocalStorage(res.data);
+    console.log("otp log", res)
   };
 };
 
@@ -308,12 +310,14 @@ export const confirmOtp = (userId, otp) => {
     if (!response.ok) {
       const error = await response.json();
       dispatch(confirmOtpFail(error));
+      console.log(error)
     }
 
     const res = await response.json();
     dispatch(confirmOtpSuccess(res));
+    console.log(res)
     const userEmail = localStorage.getItem("userEmail__client");
-    dispatch(loginbyOtp(userEmail, userEmail, otp));
+    dispatch(loginbyOtp(userEmail, otp));
   };
 };
 
@@ -344,7 +348,7 @@ export const disableConfirmOtp = (userId, otp, isRemember, days) => {
     const res = await response.json();
     dispatch(confirmOtpSuccess(res));
     const userEmail = localStorage.getItem("userEmail__client");
-    dispatch(loginbyOtp(userEmail, userEmail, otp));
+    dispatch(loginbyOtp(userEmail, otp));
   };
 };
 
@@ -380,11 +384,11 @@ export const logOutTimer = (dispatch, timer) => {
 export const AutoAuthenticate = (dispatch) => {
   const AuthToken = localStorage.getItem("AuthToken__client");
   const CurrentUser = localStorage.getItem("CurrentUser__client");
-  const suspended = localStorage.getItem("Client__Account-Suspended");
+  // const suspended = localStorage.getItem("Client__Account-Suspended");
 
-  if (suspended) {
-    dispatch(accountSuspended());
-  }
+  // if (!!suspended) {
+  //   dispatch(accountSuspended());
+  // }
   let UserToken = "";
   if (!AuthToken) {
     dispatch(logout());

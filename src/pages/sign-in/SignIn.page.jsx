@@ -76,7 +76,7 @@ function SignIn() {
         }
         if (error.exception.includes("User Not Active")) {
           has2faEnabled = true;
-          localStorage.setItem("Client__Account-Suspended", true);
+          // localStorage.setItem("Client__Account-Suspended", true);
           dispatch(accountSuspended());
           navigate("/client/account-suspended");
 
@@ -98,6 +98,7 @@ function SignIn() {
         }
       }
       const res = await response.json();
+      // localStorage.removeItem('Client__Account-Suspended');
       if (res.messages[0]) {
         has2faEnabled = true;
         navigate("/client/one-time-password");
