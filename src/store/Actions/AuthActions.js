@@ -6,6 +6,9 @@ import {
   confirmOtpFail,
   confirmOtpPending,
   confirmOtpSuccess,
+  fetchAuthentorUriFail,
+  fetchAuthentorUriPending,
+  fetchAuthentorUriSuccess,
   forgotPasswordFail,
   forgotPasswordPending,
   forgotPasswordSuccess,
@@ -71,7 +74,7 @@ export const SaveTokenInLocalStorage = (TokenDetails) => {
 export const loginbyOtp = (email, otpCode) => {
   return async (dispatch) => {
     dispatch(initAuthenticationPending());
-    console.log(email, otpCode)
+    console.log(email, otpCode);
     const response = await fetch(
       `${process.env.REACT_APP_BASEURL}/api/tokens/gettokenbyotp`,
       {
@@ -90,13 +93,13 @@ export const loginbyOtp = (email, otpCode) => {
     if (!response.ok) {
       const error = await response.json();
       dispatch(initAuthenticationFail(error));
-      console.log("Otp err",error)
+      console.log("Otp err", error);
     }
     const res = await response.json();
     dispatch(initAuthenticationSuccess(res.data));
     dispatch(getUserProfile(res.data.token));
     SaveTokenInLocalStorage(res.data);
-    console.log("otp log", res)
+    console.log("otp log", res);
   };
 };
 
@@ -310,12 +313,12 @@ export const confirmOtp = (userId, otp) => {
     if (!response.ok) {
       const error = await response.json();
       dispatch(confirmOtpFail(error));
-      console.log(error)
+      console.log(error);
     }
 
     const res = await response.json();
     dispatch(confirmOtpSuccess(res));
-    console.log(res)
+    console.log(res);
     const userEmail = localStorage.getItem("userEmail__client");
     dispatch(loginbyOtp(userEmail, otp));
   };
@@ -408,4 +411,32 @@ export const AutoAuthenticate = (dispatch) => {
 
   // const timer = expireDate.getTime() - todaysDate.getTime();
   // logOutTimer(dispatch, timer);
+};
+
+export const GetMFAUri = (userId) => {
+  return async (dispatch) => {
+    dispatch(fetchAuthentorUriPending());
+    const response = await fetch(
+      `${process.env.REACT_APP_BASEURL}/api/mfauthenticator/get-mfa-key`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          userId,
+        }),
+        headers: new Headers({
+          "Content-type": "application/json",
+          "gen-api-key": process.env.REACT_APP_GEN_APIKEY,
+          tenant: "admin",
+        }),
+      }
+    );
+    if (!response.ok) {
+      const error = await response.json();
+      dispatch(fetchAuthentorUriFail(error));
+      console.log("ZFa err", error);
+    }
+    const res = await response.json();
+    dispatch(fetchAuthentorUriSuccess(res.authenticatorUri));
+    console.log("2Fa", res);
+  };
 };

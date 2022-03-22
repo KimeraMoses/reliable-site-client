@@ -1,4 +1,8 @@
 .sidebar {
   min-height: calc(100vh - 6rem);
   height: 100%;
+
+  .qr__code{
+    padding: 20px;
+  }
 }

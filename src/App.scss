@@ -1,7 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400&display=swap");
 
 body {
-  font-family: 'Poppins', sans-serif !important;
+  font-family: "Poppins", sans-serif !important;
   background: #151521;
 }
 
@@ -21,10 +21,25 @@ body {
 .border-dashed-bottom {
   border-bottom: 1px dashed #323248;
 }
-.password-stength {
-}
+
 .password-stength span {
   height: 4px;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.1);
+}
+::-webkit-scrollbar-thumb {
+  background-color: #151521;
+  border-radius: 10px;
+  background-image: linear-gradient(180deg, #333334 0%, #1e1e2d 99%);
+  border-radius: 100px;
 }
 
 @tailwind base;

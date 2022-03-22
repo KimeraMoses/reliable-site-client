@@ -5,7 +5,8 @@ import { useMediaQuery } from "react-responsive";
 import { SideBar, TopBar } from "./components";
 import classes from "./Dashboard.layout.module.css";
 import Data from "../db.json";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { GetMFAUri } from "../store/Actions/AuthActions";
 
 export function DashboardLayout({ children, hide }) {
   const [active, setActive] = useState("");
@@ -14,13 +15,17 @@ export function DashboardLayout({ children, hide }) {
   const Roles = user && user.userRolesResponse;
   const isAdmin =
     Roles.userRoles && Roles.userRoles[0] && Roles.userRoles[0].enabled;
-  console.log(Roles, isAdmin);
+
   const { pathname } = useLocation();
 
   const lessThanDesktop = useMediaQuery({
     query: "(max-width: 900px)",
   });
   const [hideSide, setHideSide] = useState(!!lessThanDesktop);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(GetMFAUri(user && user.id));
+  }, [user, dispatch]);
 
   useEffect(() => {
     const activeLink = Data.pages.dashboard.sidebar.filter((sideItem) => {

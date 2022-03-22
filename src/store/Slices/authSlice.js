@@ -1,19 +1,20 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   user: {},
   token: null,
   rToken: null,
   isLoggedIn: false,
-  status: '',
+  status: "",
   message: null,
-  updateStatus: '',
+  updateStatus: "",
   isLoading: false,
+  authUri: "",
 };
 
 export const authSlice = createSlice({
   initialState,
-  name: 'authSlice',
+  name: "authSlice",
   reducers: {
     autoAuthenticationSuccess(state, { payload }) {
       state.user = payload.user;
@@ -59,6 +60,17 @@ export const authSlice = createSlice({
       state.message = payload.message;
       state.status = payload.status;
     },
+    fetchAuthentorUriPending(state) {
+      state.isLoading = true;
+    },
+    fetchAuthentorUriSuccess(state, { payload }) {
+      state.isLoading = false;
+      state.authUri = payload;
+    },
+    fetchAuthentorUriFail(state, { payload }) {
+      state.isLoading = false;
+      state.message = payload;
+    },
     forgotPasswordPending(state) {
       state.isLoading = true;
     },
@@ -94,8 +106,8 @@ export const authSlice = createSlice({
       state.user = {};
       state.token = null;
       state.isLoggedIn = false;
-      localStorage.removeItem('AuthToken__client');
-      localStorage.removeItem('CurrentUser__client');
+      localStorage.removeItem("AuthToken__client");
+      localStorage.removeItem("CurrentUser__client");
     },
   },
 });
@@ -121,6 +133,9 @@ export const {
   confirmOtpPending,
   confirmOtpSuccess,
   confirmOtpFail,
+  fetchAuthentorUriPending,
+  fetchAuthentorUriSuccess,
+  fetchAuthentorUriFail,
   logout,
 } = actions;
 

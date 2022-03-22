@@ -3,7 +3,7 @@ import React from 'react';
 function Logo({ hide, hideSide, toggleSide }) {
   return (
     <div
-      className={`flex items-center justify-between bg-custom-main h-24 pl-5 transition-all ${
+      className={`flex items-center justify-between bg-custom-main h-20 pl-5 transition-all ${
         hideSide ? 'w-[95px]' : 'w-[300px]'
       } ${hide ? 'bg-[#1e1e2d]' : 'bg-[#1A1A27]'}`}
     >

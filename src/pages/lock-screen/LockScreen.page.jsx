@@ -160,6 +160,7 @@ function LockScreen() {
               />
               <button
                 type="submit"
+                disabled={password.length < 6}
                 className="w-full h-12 custom-blue-bg ease-in duration-200 rounded-lg text-white bg-blue-500 hover:bg-blue-700"
               >
                 {isLoading ? "Logging In..." : "Sign In"}

@@ -47,7 +47,7 @@ function App() {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const { maintenance, suspended } = useSelector((state) => state.settings);
   const isIdle = useSelector((state) => state.settings.isIdle);
-  const TimeOut = 1000* 900
+  const TimeOut = 1000* 60
   const idleTimer = useRef(null);
 
   const OnIdle = () => {

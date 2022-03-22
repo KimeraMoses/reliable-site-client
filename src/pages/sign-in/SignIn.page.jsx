@@ -70,6 +70,7 @@ function SignIn() {
       );
       if (!response.ok) {
         const error = await response.json();
+        console.log(error)
         dispatch(initAuthenticationFail(error));
         if (error.exception === "User Not Found.") {
           setError("User Not found, Please check your credentials");
@@ -98,6 +99,7 @@ function SignIn() {
         }
       }
       const res = await response.json();
+      console.log(res)
       // localStorage.removeItem('Client__Account-Suspended');
       if (res.messages[0]) {
         has2faEnabled = true;
